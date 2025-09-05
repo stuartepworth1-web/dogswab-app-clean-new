@@ -4,9 +4,6 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.dogswab.app
       vars:
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
