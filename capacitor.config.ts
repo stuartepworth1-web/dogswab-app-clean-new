@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.dogswab.petcare',
+  appId: 'com.dogswab.healthassistant',
   appName: 'DOGSWAB',
   webDir: 'dist',
   version: '1.0.6',
