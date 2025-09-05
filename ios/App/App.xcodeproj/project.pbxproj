@@ -227,7 +227,7 @@
 				504EC30C1FED79650016851F /* Base */,
 			);
 			name = Main.storyboard;
-			path = Base.lproj/Main.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 		504EC3101FED79650016851F /* LaunchScreen.storyboard */ = {
@@ -236,7 +236,7 @@
 				504EC3111FED79650016851F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			path = Base.lproj/LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
