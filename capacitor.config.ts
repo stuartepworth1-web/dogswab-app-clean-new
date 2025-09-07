@@ -1,19 +1,26 @@
-require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
+import { CapacitorConfig } from '@capacitor/cli';
 
-platform :ios, '13.0'
-use_frameworks!
+const config: CapacitorConfig = {
+  appId: 'com.dogswab.app',
+  appName: 'DOGSWAB',
+  webDir: 'dist',
+  ios: {
+    minVersion: '13.0'
+  },
+  server: {
+    androidScheme: 'https'
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#77e1c0",
+      showSpinner: false
+    },
+    StatusBar: {
+      style: 'light',
+      backgroundColor: "#77e1c0"
+    }
+  }
+};
 
-def capacitor_pods
-  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-  pod 'CapacitorSplashScreen', :path => '../../node_modules/@capacitor/splash-screen'
-  pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
-end
-
-target 'App\' do
-  capacitor_pods
-end
-
-post_install do |installer|
-  assertDeploymentTarget(installer)
-end
+export default config;
