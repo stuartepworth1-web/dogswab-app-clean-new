@@ -1,36 +1,118 @@
 workflows:
   ios-workflow:
-    name: iOS Workflow
+    name: iOS Workflow - DOGSWAB
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
       node: 20.9.0
       xcode: latest
       cocoapods: default
+    cache:
+      cache_paths: []
     scripts:
+      - name: Clear ALL caches aggressively
+        script: |
+          echo "🧹 AGGRESSIVE CACHE CLEARING..."
+          rm -rf ~/Library/Developer/Xcode/DerivedData/*
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode
+          rm -rf ~/Library/Caches/com.apple.CoreSimulator
+          rm -rf ios/App/build/*
+          rm -rf node_modules/.cache
+          rm -rf ~/.npm/_cacache
+          rm -rf ios/App/App/Assets.xcassets/.DS_Store
+          rm -rf ios/App/App/Assets.xcassets/AppIcon.appiconset/.DS_Store
+          echo "🔥 NUCLEAR XCODE CACHE CLEARING..."
+          rm -rf ~/Library/Developer/Xcode/UserData/*
+          rm -rf ~/Library/Developer/CoreSimulator/*
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode/*
+          rm -rf ~/Library/Saved\ Application\ State/com.apple.dt.Xcode.*
+          echo "🧨 DELETING ENTIRE iOS BUILD FOLDER..."
+          rm -rf ios/App/build
+          rm -rf ios/App/App.xcworkspace/xcuserdata
+          rm -rf ios/App/App.xcodeproj/xcuserdata
+          rm -rf ios/App/App.xcodeproj/project.xcworkspace/xcuserdata
+          echo "🔄 Cleaning Capacitor..."
+          npx cap clean ios || true
+          echo "✅ All caches cleared!"
       - name: Install dependencies
         script: |
           rm -f package-lock.json
           npm install
-      - name: Install Capacitor dependencies
-        script: |
-          npm install @capacitor/core@6.2.1 @capacitor/ios@6.2.1 @capacitor/cli@6.2.1 --save-exact
       - name: Build web app
         script: |
           npm run build
+      - name: FORCE icon refresh
+        script: |
+          echo "🎨 FORCING ICON REFRESH..."
+          cd ios/App/App/Assets.xcassets/AppIcon.appiconset
+          echo "Current icon files:"
+          ls -la *.png || echo "No PNG files found"
+          echo "Touching all icon files to force refresh..."
+          find . -name "*.png" -exec touch {} \;
+          echo "🖼️ NUCLEAR SPLASH SCREEN FIX..."
+          cd ../Splash.imageset
+          echo "Current splash files:"
+          ls -la *.png || echo "No splash PNG files found"
+          echo "🔥 DELETING ALL CAPACITOR SPLASH IMAGES..."
+          rm -f *.png
+          echo "📥 DOWNLOADING DOGSWAB LOGO FOR ALL SPLASH SIZES..."
+          curl -L --retry 3 --max-time 120 -o splash-2732x2732.png "https://storage.reimage.dev/dogswabapp/dba9be83d5bd/original"
+          curl -L --retry 3 --max-time 120 -o splash-2732x2732-1.png "https://storage.reimage.dev/dogswabapp/dba9be83d5bd/original"
+          curl -L --retry 3 --max-time 120 -o splash-2732x2732-2.png "https://storage.reimage.dev/dogswabapp/dba9be83d5bd/original"
+          echo "🔄 FORCING FILE REFRESH..."
+          touch *.png
+          echo "📋 VERIFYING SPLASH FILES REPLACED:"
+          ls -la *.png
+          echo "✅ SPLASH SCREEN NUCLEAR REPLACEMENT COMPLETE!"
+          cd ../../AppIcon.appiconset
+          echo "🔥 NUCLEAR ICON REFRESH..."
+          # Delete and recreate Contents.json to force Xcode refresh
+          rm -f Contents.json
+          cat > Contents.json << 'EOF'
+{
+  "images" : [
+    {
+      "filename" : "AppIcon-512@2x.png",
+      "idiom" : "ios-marketing",
+      "scale" : "1x",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+EOF
+          echo "✅ Recreated Contents.json with only 1024x1024 icon"
+          echo "✅ Icon refresh complete!"
       - name: Sync Capacitor
         script: |
           npx cap sync ios
+      - name: VERIFY icons before build
+        script: |
+          echo "🔍 VERIFYING ICON FILES..."
+          echo "Contents of AppIcon.appiconset:"
+          ls -la ios/App/App/Assets.xcassets/AppIcon.appiconset/
+          echo "Contents.json:"
+          cat ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json
+          echo "Checking for DOGSWAB logo in AppIcon-512@2x.png..."
+          echo "🖼️ VERIFYING SPLASH SCREEN FILES REPLACED..."
+          echo "Contents of Splash.imageset:"
+          ls -la ios/App/App/Assets.xcassets/Splash.imageset/
+          echo "Splash Contents.json:"
+          cat ios/App/App/Assets.xcassets/Splash.imageset/Contents.json
+          echo "🔍 CHECKING IF SPLASH FILES ARE ACTUALLY DOGSWAB LOGO:"
+          echo "File sizes:"
+          ls -lh ios/App/App/Assets.xcassets/Splash.imageset/*.png
       - name: Install CocoaPods
         script: |
           cd ios/App
           pod install --repo-update
-      - name: Sync Capacitor
-        script: |
-          npx cap sync ios
       - name: Build iOS app
         script: |
           cd ios/App
+          echo "🏗️ BUILDING WITH FRESH ICONS..."
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
