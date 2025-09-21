@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Use current timestamp to ensure uniqueness
-const newBuildNumber = Math.floor(Date.now() / 1000).toString(); // Unix timestamp
+const newBuildNumber = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
 console.log(`Setting build number to: ${newBuildNumber}`);
 
 // Update Info.plist
