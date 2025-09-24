@@ -1,30 +1,35 @@
-# DOGSWAB Pet Diagnostic App
+# DOGSWAB Pet Health Education App
 
-A modern pet health consultation app powered by Anthropic Claude AI with professional veterinary marketplace and insurance integration.
+A pet health education platform providing educational information and connecting pet owners with veterinary professionals and insurance providers.
+
+## ⚠️ CRITICAL MEDICAL DISCLAIMER
+
+**DOGSWAB provides EDUCATIONAL INFORMATION ONLY and does NOT provide medical advice, diagnosis, or treatment. This app CANNOT replace professional veterinary examination. We are NOT licensed veterinarians and do NOT practice veterinary medicine.**
+
+**For ALL health concerns, symptoms, or medical decisions about your pet, you MUST consult with a licensed veterinarian immediately. For emergencies, contact your veterinarian or emergency animal hospital RIGHT NOW.**
 
 ## 🚀 Features
 
-### **AI Health Consultations**
-- Real-time AI-powered pet health analysis using Anthropic Claude
-- Photo symptom analysis and diagnosis
-- Emergency detection with immediate alerts
-- Personalized recommendations based on pet profiles
-- 24/7 availability for health questions
+### **Pet Health Education (Information Only)**
+- General pet health information and educational guidance
+- Educational content about pet care
+- Educational health tracking and record keeping
+- Veterinary resource directory
+- Pet care educational reminders and tips
+- **NOT medical advice, diagnosis, or treatment**
 
 ### **Professional Veterinary Network**
 - Licensed veterinarian marketplace
-- Video and in-person consultations
+- Find and contact local veterinarians
 - Emergency and routine care booking
-- House call services
-- Direct vet-to-owner messaging
+- Veterinary clinic directory
 - 15% commission structure for vets
 
 ### **Comprehensive Health Management**
 - Multi-pet profiles with detailed health tracking
 - Vaccination and medication reminders
 - Complete health history records
-- Wellness score monitoring
-- Symptom and behavior tracking
+- Health milestone tracking
 - Photo-based health records
 
 ### **Pet Insurance Integration**
@@ -36,10 +41,10 @@ A modern pet health consultation app powered by Anthropic Claude AI with profess
 - $50 referral commission per signup
 
 ### **Premium Subscription Tiers**
-- **Free**: 5 AI consultations/month, basic profiles
-- **Basic ($9.99/month)**: 50 consultations, photo analysis, email support
-- **Premium ($19.99/month)**: Unlimited consultations, vet booking, priority support
-- **Pro ($49.99/month)**: Everything + 24/7 emergency hotline, family sharing
+- **Free**: Basic pet profiles and health tracking
+- **Basic ($9.99/month)**: Enhanced tracking, veterinary directory access
+- **Premium ($19.99/month)**: Priority vet booking, insurance quotes
+- **Pro ($49.99/month)**: Everything + premium support, family sharing
 
 ## 🛠️ Setup Instructions
 
@@ -95,10 +100,10 @@ npm run android  # Opens Android Studio
 - **Vite** for build tooling
 - **Capacitor** for mobile deployment
 
-### **AI Integration**
-- **Anthropic Claude 3.5 Sonnet** for health consultations
-- **Computer Vision API** for photo analysis
-- **Natural Language Processing** for symptom categorization
+### **Educational Content**
+- **Curated pet health information**
+- **Veterinary resource database**
+- **Health tracking tools**
 
 ### **Payment Processing**
 - **Stripe** for subscription management
@@ -168,7 +173,7 @@ npm run build
 
 ## ⚕️ Important Medical Disclaimer
 
-DOGSWAB provides general pet health information and guidance only. This app cannot replace professional veterinary examination, diagnosis, or treatment. Always consult with a licensed veterinarian for medical decisions about your pet's health. In emergency situations, contact your veterinarian or emergency animal hospital immediately.
+DOGSWAB provides general pet health education and information only. This app does not diagnose, treat, or provide medical advice. It cannot replace professional veterinary examination, diagnosis, or treatment. Always consult with a licensed veterinarian for ALL medical decisions about your pet's health. In emergency situations, contact your veterinarian or emergency animal hospital immediately.
 
 ## 📄 License
 

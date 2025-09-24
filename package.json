@@ -1,18 +1,22 @@
 {
-  "name": "dogswab-pet-health-app",
+  "name": "DOGSWAB - Pet Health Assistant",
   "private": true,
-  "version": "1.0.009",
+  "version": "1.0.0",
   "type": "module",
-  "description": "AI-powered pet health consultation app with veterinary marketplace",
+  "description": "Pet health education app connecting owners with veterinarians and insurance providers",
   "keywords": [
     "pet health",
+    "pet education",
+    "veterinary directory",
+    "pet care information",
+    "animal health education",
     "veterinary",
-    "AI diagnosis",
-    "pet care",
-    "mobile app"
+    "vet finder",
+    "pet insurance quotes",
+    "educational app",
+    "pet wellness information"
   ],
   "author": "DOGSWAB Team",
-  "homepage": "https://dogswab.com",
   "scripts": {
     "dev": "vite",
     "build": "node scripts/update-build-number.js && vite build",
