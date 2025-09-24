@@ -8,7 +8,9 @@ import './index.css';
 
 // Check if we're in StackBlitz environment
 const isStackBlitz = window.location.hostname.includes('stackblitz') || 
-                     window.location.hostname.includes('webcontainer');
+                     window.location.hostname.includes('webcontainer') ||
+                     window.location.hostname.includes('localhost') ||
+                     window.location.hostname.includes('capacitor');
 
 // Initialize Capacitor for mobile
 if (Capacitor.isNativePlatform()) {
@@ -36,8 +38,11 @@ if (Capacitor.isNativePlatform()) {
   document.documentElement.style.setProperty('--safe-area-inset-bottom', 'env(safe-area-inset-bottom)');
   document.documentElement.style.setProperty('--safe-area-inset-left', 'env(safe-area-inset-left)');
   document.documentElement.style.setProperty('--safe-area-inset-right', 'env(safe-area-inset-right)');
-} else if (isStackBlitz) {
-  console.log('Service Worker registration skipped in StackBlitz environment');
+  
+  // Skip service worker registration on mobile
+  console.log('Service Worker registration skipped on mobile platform');
+} else {
+  console.log('Running in web browser environment');
 }
 
 // Initialize app-wide settings
@@ -48,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // Set up service worker for PWA features
-  if ('serviceWorker' in navigator && !isStackBlitz) {
+  if ('serviceWorker' in navigator && !isStackBlitz && !Capacitor.isNativePlatform()) {
     navigator.serviceWorker.register('/sw.js').catch(console.error);
   }
 });
@@ -58,6 +63,3 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 );
-
-if ('serviceWorker' in navigator && !isStackBlitz) {
-}

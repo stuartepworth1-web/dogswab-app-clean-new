@@ -548,13 +548,13 @@ Expected monthly earnings: $2,000-$8,000`);
         {/* Terms and Privacy Links - Required for App Store */}
         <div className="fixed bottom-4 left-4 z-40 space-y-2">
           <button
-            onClick={() => setShowTermsOfService(true)}
+            onClick={() => window.open('/terms.html', '_blank')}
             className="block text-xs text-white/70 hover:text-white underline bg-black/20 px-2 py-1 rounded"
           >
             Terms of Use
           </button>
           <button
-            onClick={() => setShowPrivacyPolicy(true)}
+            onClick={() => window.open('/privacy.html', '_blank')}
             className="block text-xs text-white/70 hover:text-white underline bg-black/20 px-2 py-1 rounded"
           >
             Privacy Policy

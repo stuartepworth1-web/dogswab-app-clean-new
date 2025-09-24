@@ -140,8 +140,11 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 • <strong>DOGSWAB Premium Monthly:</strong> $19.99/month<br/>
                 • <strong>DOGSWAB Pro Monthly:</strong> $49.99/month<br/>
                 Payment charged to iTunes Account. Auto-renews unless cancelled 24 hours before period ends.<br/>
-                <button onClick={() => window.open('/terms.html', '_blank')} className="underline">Terms of Use</button> | 
-                <button onClick={() => window.open('/privacy.html', '_blank')} className="underline ml-1">Privacy Policy</button>
+                <div className="mt-2 space-x-2">
+                  <button onClick={() => window.open('/terms.html', '_blank')} className="underline text-blue-800 hover:text-blue-900">Terms of Use</button>
+                  <span>|</span>
+                  <button onClick={() => window.open('/privacy.html', '_blank')} className="underline text-blue-800 hover:text-blue-900">Privacy Policy</button>
+                </div>
               </p>
             </div>
             <button

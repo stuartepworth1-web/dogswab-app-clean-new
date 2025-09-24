@@ -202,12 +202,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {/* Medical Disclaimer */}
             <div className="mt-6 px-4">
               <InlineMedicalDisclaimer />
-              <div className="text-center mt-4">
+              <div className="text-center mt-4 space-y-2">
                 <button
                   onClick={() => window.open('/privacy.html', '_blank')}
-                  className="text-dogswab-navy/60 hover:text-dogswab-navy text-sm underline"
+                  className="block w-full text-dogswab-navy/60 hover:text-dogswab-navy text-sm underline bg-white/20 py-2 px-4 rounded-lg"
                 >
                   Privacy Policy
+                </button>
+                <button
+                  onClick={() => window.open('/terms.html', '_blank')}
+                  className="block w-full text-dogswab-navy/60 hover:text-dogswab-navy text-sm underline bg-white/20 py-2 px-4 rounded-lg"
+                >
+                  Terms of Use
                 </button>
               </div>
             </div>
