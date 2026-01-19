@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>1768830674</string>
 	<key>NSCameraUsageDescription</key>
 	<string>DOGSWAB uses camera to capture photos for your pet's health records and educational purposes only. This helps you maintain better health documentation.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
