@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, MessageSquare, Heart, Settings, Menu, X, Crown, Activity, Stethoscope, Shield, Bell } from 'lucide-react';
+import { Plus, MessageSquare, Heart, Settings, Menu, X, Crown, Activity, Stethoscope, Shield, Bell, FileText, Clipboard, Lightbulb } from 'lucide-react';
 import { Chat, Pet } from '../types';
 import { ReminderList } from './ReminderList';
 
@@ -16,6 +16,9 @@ interface SidebarProps {
   onUpgrade: () => void;
   onVetRegistration: () => void;
   onInsuranceQuotes: (pet: Pet) => void;
+  onDocuments: () => void;
+  onVetHistory: () => void;
+  onRecommendations: () => void;
   subscriptionTier: string;
   consultationsUsed: number;
   consultationsLimit: number;
@@ -34,6 +37,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onUpgrade,
   onVetRegistration,
   onInsuranceQuotes,
+  onDocuments,
+  onVetHistory,
+  onRecommendations,
   subscriptionTier,
   consultationsUsed,
   consultationsLimit
@@ -232,13 +238,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Footer */}
         <div className="p-6 border-t border-white/30 space-y-3 safe-area-bottom">
           <button
+            onClick={onDocuments}
+            className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"
+          >
+            <FileText className="w-5 h-5 text-dogswab-navy" />
+            <span className="font-semibold text-sm">Pet Documents</span>
+          </button>
+
+          <button
+            onClick={onVetHistory}
+            className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"
+          >
+            <Clipboard className="w-5 h-5 text-dogswab-navy" />
+            <span className="font-semibold text-sm">Vet History</span>
+          </button>
+
+          <button
+            onClick={onRecommendations}
+            className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"
+          >
+            <Lightbulb className="w-5 h-5 text-dogswab-navy" />
+            <span className="font-semibold text-sm">Health Recommendations</span>
+          </button>
+
+          <button
             onClick={onPetManagement}
             className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"
           >
             <Settings className="w-6 h-6 text-dogswab-navy" />
             <span className="font-semibold text-base">Manage Pets</span>
           </button>
-          
+
           <button
             onClick={onVetRegistration}
             className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"

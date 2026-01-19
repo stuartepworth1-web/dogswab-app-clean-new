@@ -1,7 +1,7 @@
 {
   "name": "DOGSWAB - Pet Health Assistant",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.674",
   "type": "module",
   "description": "Pet health education app connecting owners with veterinarians and insurance providers",
   "keywords": [

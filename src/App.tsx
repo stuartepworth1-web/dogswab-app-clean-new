@@ -18,6 +18,9 @@ import { PetOnboarding } from './components/PetOnboarding';
 import { VetRegistration } from './components/VetRegistration';
 import { InsuranceQuotes } from './components/InsuranceQuotes';
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import PetDocuments from './components/PetDocuments';
+import VetHistory from './components/VetHistory';
+import HealthRecommendations from './components/HealthRecommendations';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateAIResponse, categorizeMessage } from './services/aiService';
 import { createCheckoutSession, redirectToCheckout } from './services/stripeService';
@@ -34,7 +37,7 @@ interface User {
   emailVerified: boolean;
 }
 
-type View = 'chat' | 'pets' | 'health' | 'vet-registration' | 'privacy-policy';
+type View = 'chat' | 'pets' | 'health' | 'vet-registration' | 'privacy-policy' | 'documents' | 'vet-history' | 'recommendations';
 
 function App() {
   // User Authentication
@@ -421,6 +424,18 @@ Expected monthly earnings: $2,000-$8,000`);
           onUpgrade={() => setShowSubscriptionModal(true)}
           onVetRegistration={() => setShowVetRegistration(true)}
           onInsuranceQuotes={showInsuranceForPet}
+          onDocuments={() => {
+            setCurrentView('documents');
+            setSidebarOpen(false);
+          }}
+          onVetHistory={() => {
+            setCurrentView('vet-history');
+            setSidebarOpen(false);
+          }}
+          onRecommendations={() => {
+            setCurrentView('recommendations');
+            setSidebarOpen(false);
+          }}
           subscriptionTier={subscription.tier}
           consultationsUsed={subscription.consultationsUsed}
           consultationsLimit={subscription.consultationsLimit}
@@ -516,6 +531,54 @@ Expected monthly earnings: $2,000-$8,000`);
             </div>
           ) : currentView === 'privacy-policy' ? (
             <PrivacyPolicyPage onBack={() => setCurrentView('chat')} />
+          ) : currentView === 'documents' ? (
+            <div className="flex-1 overflow-y-auto p-8 bg-white">
+              <div className="max-w-7xl mx-auto">
+                <button
+                  onClick={() => setCurrentView('chat')}
+                  className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  ← Back to Chat
+                </button>
+                <PetDocuments
+                  userId={user?.id || 'guest'}
+                  pets={pets}
+                  isPremium={subscription.tier === 'premium'}
+                />
+              </div>
+            </div>
+          ) : currentView === 'vet-history' ? (
+            <div className="flex-1 overflow-y-auto p-8 bg-white">
+              <div className="max-w-7xl mx-auto">
+                <button
+                  onClick={() => setCurrentView('chat')}
+                  className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  ← Back to Chat
+                </button>
+                <VetHistory
+                  userId={user?.id || 'guest'}
+                  pets={pets}
+                  isPremium={subscription.tier === 'premium'}
+                />
+              </div>
+            </div>
+          ) : currentView === 'recommendations' ? (
+            <div className="flex-1 overflow-y-auto p-8 bg-white">
+              <div className="max-w-7xl mx-auto">
+                <button
+                  onClick={() => setCurrentView('chat')}
+                  className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  ← Back to Chat
+                </button>
+                <HealthRecommendations
+                  userId={user?.id || 'guest'}
+                  pets={pets}
+                  isPremium={subscription.tier === 'premium'}
+                />
+              </div>
+            </div>
           ) : null}
         </div>
 

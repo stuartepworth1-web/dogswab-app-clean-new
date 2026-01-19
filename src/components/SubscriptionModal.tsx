@@ -141,9 +141,9 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 • <strong>DOGSWAB Pro Monthly:</strong> $49.99/month<br/>
                 Payment charged to iTunes Account. Auto-renews unless cancelled 24 hours before period ends.<br/>
                 <div className="mt-2 space-x-2">
-                  <button onClick={() => window.open('/terms.html', '_blank')} className="underline text-blue-800 hover:text-blue-900">Terms of Use</button>
+                  <a href="/terms.html" target="_blank" rel="noopener noreferrer" className="underline text-blue-800 hover:text-blue-900 font-semibold">Terms of Use (EULA)</a>
                   <span>|</span>
-                  <button onClick={() => window.open('/privacy.html', '_blank')} className="underline text-blue-800 hover:text-blue-900">Privacy Policy</button>
+                  <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="underline text-blue-800 hover:text-blue-900 font-semibold">Privacy Policy</a>
                 </div>
               </p>
             </div>
@@ -155,7 +155,9 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               {currentTier === selectedTier ? 'Current Plan' : 'Upgrade Now'}
             </button>
             <p className="text-xs text-dogswab-navy/60 mt-2">
-              Managed by Apple App Store. Cancel in App Store settings.
+              Managed by Apple App Store. Cancel in App Store settings.<br/>
+              <a href="/terms.html" className="underline text-dogswab-mint hover:text-dogswab-mint-dark">Terms of Use</a> | 
+              <a href="/privacy.html" className="underline text-dogswab-mint hover:text-dogswab-mint-dark">Privacy Policy</a>
             </p>
           </div>
         </div>
