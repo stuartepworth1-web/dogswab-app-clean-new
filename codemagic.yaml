@@ -7,12 +7,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.dogswab.app
-      vars:
-        XCODE_WORKSPACE: "App.xcworkspace"
-        XCODE_SCHEME: "App"
-        APP_STORE_CONNECT_ISSUER_ID: YOUR_ISSUER_ID
-        APP_STORE_CONNECT_KEY_IDENTIFIER: YOUR_KEY_ID
-        APP_STORE_CONNECT_PRIVATE_KEY: Encrypted(YOUR_ENCRYPTED_KEY)
       node: 20.9.0
       xcode: latest
       cocoapods: default
@@ -139,16 +133,16 @@ workflows:
       - ios/App/build/ipa/*.ipa
       - ios/App/build/App.xcarchive
       - ios/App/build/logs/*.log
-    publishing:
-      email:
-        recipients:
-          - YOUR_EMAIL@example.com
-        notify:
-          success: true
-          failure: true
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
-        beta_groups:
-          - Internal Testers
-        submit_to_app_store: false
+    # publishing:
+    #   email:
+    #     recipients:
+    #       - your.email@example.com
+    #     notify:
+    #       success: true
+    #       failure: true
+    #   app_store_connect:
+    #     auth: integration  # Requires App Store Connect integration setup in Codemagic Teams > Integrations
+    #     submit_to_testflight: true
+    #     beta_groups:
+    #       - Internal Testers
+    #     submit_to_app_store: false
