@@ -4,9 +4,10 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.dogswab.app
+      # STEP 1: Uncomment ios_signing below after setting up code signing in Codemagic
+      # ios_signing:
+      #   distribution_type: app_store
+      #   bundle_identifier: com.dogswab.app
       node: 20.9.0
       xcode: latest
       cocoapods: default
@@ -114,25 +115,31 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios/App
-          echo "🏗️ BUILDING AND CODE SIGNING FOR APP STORE..."
+          echo "🏗️ BUILDING IOS APP..."
+          # Build without code signing for now - enable signing after setup
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
             -destination generic/platform=iOS \
             -archivePath build/App.xcarchive \
-            archive
-      - name: Export IPA for App Store
-        script: |
-          cd ios/App
-          echo "📦 EXPORTING IPA FOR APP STORE..."
-          xcodebuild -exportArchive \
-            -archivePath build/App.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
+            archive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      # STEP 2: Uncomment export step below after setting up code signing
+      # - name: Export IPA for App Store
+      #   script: |
+      #     cd ios/App
+      #     echo "📦 EXPORTING IPA FOR APP STORE..."
+      #     xcodebuild -exportArchive \
+      #       -archivePath build/App.xcarchive \
+      #       -exportPath build/ipa \
+      #       -exportOptionsPlist exportOptions.plist
     artifacts:
-      - ios/App/build/ipa/*.ipa
       - ios/App/build/App.xcarchive
       - ios/App/build/logs/*.log
+      # - ios/App/build/ipa/*.ipa  # Will be available after enabling code signing
+    # STEP 3: Uncomment publishing section below after completing code signing setup
     # publishing:
     #   email:
     #     recipients:
