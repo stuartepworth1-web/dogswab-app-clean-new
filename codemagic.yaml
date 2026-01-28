@@ -128,6 +128,7 @@ workflows:
             -destination generic/platform=iOS \
             -archivePath build/App.xcarchive \
             -allowProvisioningUpdates \
+            CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             archive | xcpretty
       - name: Export IPA for App Store
@@ -136,11 +137,14 @@ workflows:
           echo "📦 EXPORTING IPA FOR APP STORE..."
           echo "Updating exportOptions.plist with team ID: $APPLE_TEAM_ID"
           sed -i '' "s/<string>L8UL93UKHN<\/string>/<string>$APPLE_TEAM_ID<\/string>/g" exportOptions.plist
+          echo "📄 Export options:"
           cat exportOptions.plist
+          echo "🔐 Starting export with automatic signing..."
           xcodebuild -exportArchive \
             -archivePath build/App.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
+            -exportOptionsPlist exportOptions.plist \
+            -allowProvisioningUpdates
     artifacts:
       - ios/App/build/App.xcarchive
       - ios/App/build/logs/*.log
