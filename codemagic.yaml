@@ -8,6 +8,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.dogswab.app
       vars:
+        APPLE_TEAM_ID: $APPLE_TEAM_ID
         APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
         APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
         APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
@@ -115,6 +116,13 @@ workflows:
         script: |
           cd ios/App
           pod install --repo-update
+      - name: Set Development Team
+        script: |
+          cd ios/App
+          echo "🔐 Setting Apple Development Team ID..."
+          sed -i '' "s/DEVELOPMENT_TEAM = \"\";/DEVELOPMENT_TEAM = \"$APPLE_TEAM_ID\";/g" App.xcodeproj/project.pbxproj
+          sed -i '' "s/DEVELOPMENT_TEAM = ;/DEVELOPMENT_TEAM = \"$APPLE_TEAM_ID\";/g" App.xcodeproj/project.pbxproj
+          echo "✅ Development Team ID set to: $APPLE_TEAM_ID"
       - name: Build iOS app
         script: |
           cd ios/App
