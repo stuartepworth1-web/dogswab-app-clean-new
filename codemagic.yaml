@@ -8,7 +8,6 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.dogswab.app
       vars:
-        APPLE_TEAM_ID: $APPLE_TEAM_ID
         APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
         APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
         APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
@@ -120,20 +119,34 @@ workflows:
         script: |
           cd ios/App
           echo "🏗️ BUILDING IOS APP WITH CODE SIGNING..."
+          echo "Bundle ID: com.dogswab.app"
 
-          # Verify team ID is set
-          if [ -z "$APPLE_TEAM_ID" ]; then
-            echo "❌ APPLE_TEAM_ID environment variable is not set"
-            exit 1
+          # Check what Codemagic has configured
+          echo "🔍 Available provisioning profiles:"
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "No profiles directory found"
+          if [ -d ~/Library/MobileDevice/Provisioning\ Profiles/ ]; then
+            echo "📱 Provisioning profile details:"
+            for profile in ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision; do
+              if [ -f "$profile" ]; then
+                echo "Profile: $(basename "$profile")"
+                security cms -D -i "$profile" | grep -A 2 "application-identifier" || true
+                security cms -D -i "$profile" | grep -A 2 "ProvisionedDevices" || true
+              fi
+            done
           fi
 
-          echo "Using Development Team: $APPLE_TEAM_ID"
-          echo "Bundle ID: com.dogswab.app"
+          echo ""
+          echo "🔍 Available certificates:"
+          security find-identity -v -p codesigning || echo "No certificates found"
+
+          echo ""
+          echo "🔍 Checking keychain:"
+          security list-keychains
 
           # Create build directory
           mkdir -p build
 
-          # Build archive with full output (no xcpretty)
+          # Build archive with automatic code signing
           set -e
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
@@ -141,8 +154,6 @@ workflows:
             -destination generic/platform=iOS \
             -archivePath build/App.xcarchive \
             -allowProvisioningUpdates \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=$APPLE_TEAM_ID \
             archive
 
           # Verify archive was created
