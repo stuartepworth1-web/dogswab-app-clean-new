@@ -122,6 +122,12 @@ workflows:
           echo "🏗️ BUILDING IOS APP WITH CODE SIGNING..."
           echo "Using Development Team: $APPLE_TEAM_ID"
           echo "Bundle ID: com.dogswab.app"
+
+          # Create build directory
+          mkdir -p build
+
+          # Build archive with full output (no xcpretty)
+          set -e
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
@@ -130,21 +136,45 @@ workflows:
             -allowProvisioningUpdates \
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            archive | xcpretty
+            archive
+
+          # Verify archive was created
+          if [ -d "build/App.xcarchive" ]; then
+            echo "✅ Archive created successfully at build/App.xcarchive"
+            ls -la build/
+          else
+            echo "❌ Archive was not created"
+            exit 1
+          fi
       - name: Export IPA for App Store
         script: |
           cd ios/App
           echo "📦 EXPORTING IPA FOR APP STORE..."
-          echo "Updating exportOptions.plist with team ID: $APPLE_TEAM_ID"
-          sed -i '' "s/<string>L8UL93UKHN<\/string>/<string>$APPLE_TEAM_ID<\/string>/g" exportOptions.plist
           echo "📄 Export options:"
           cat exportOptions.plist
+
+          # Verify archive exists
+          if [ ! -d "build/App.xcarchive" ]; then
+            echo "❌ Archive not found at build/App.xcarchive"
+            exit 1
+          fi
+
           echo "🔐 Starting export with automatic signing..."
+          set -e
           xcodebuild -exportArchive \
             -archivePath build/App.xcarchive \
             -exportPath build/ipa \
             -exportOptionsPlist exportOptions.plist \
             -allowProvisioningUpdates
+
+          # Verify IPA was created
+          if [ -f "build/ipa/App.ipa" ]; then
+            echo "✅ IPA created successfully"
+            ls -la build/ipa/
+          else
+            echo "❌ IPA was not created"
+            exit 1
+          fi
     artifacts:
       - ios/App/build/App.xcarchive
       - ios/App/build/logs/*.log
