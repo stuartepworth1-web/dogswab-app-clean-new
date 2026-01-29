@@ -16,7 +16,5 @@
     <string>automatic</string>
     <key>signingCertificate</key>
     <string>Apple Distribution</string>
-    <key>teamID</key>
-    <string>L8UL93UKHN</string>
 </dict>
 </plist>
