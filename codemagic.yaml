@@ -177,13 +177,12 @@ workflows:
             exit 1
           fi
 
-          echo "🔐 Starting export with automatic signing..."
+          echo "🔐 Starting export with signing from exportOptions.plist..."
           set -e
           xcodebuild -exportArchive \
             -archivePath build/App.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist \
-            -allowProvisioningUpdates
+            -exportOptionsPlist exportOptions.plist
 
           # Verify IPA was created
           if [ -f "build/ipa/App.ipa" ]; then
