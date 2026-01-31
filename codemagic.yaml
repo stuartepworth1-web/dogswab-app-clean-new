@@ -118,78 +118,90 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios/App
-          echo "🏗️ BUILDING IOS APP WITH CODE SIGNING..."
+          echo "🏗️ BUILDING IOS APP..."
           echo "Bundle ID: com.dogswab.app"
+          echo "Team ID: L8UL93UKHN"
 
-          # Check what Codemagic has configured
-          echo "🔍 Available provisioning profiles:"
-          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "No profiles directory found"
-          if [ -d ~/Library/MobileDevice/Provisioning\ Profiles/ ]; then
-            echo "📱 Provisioning profile details:"
-            for profile in ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision; do
-              if [ -f "$profile" ]; then
-                echo "Profile: $(basename "$profile")"
-                security cms -D -i "$profile" | grep -A 2 "application-identifier" || true
-                security cms -D -i "$profile" | grep -A 2 "ProvisionedDevices" || true
-              fi
-            done
-          fi
+          # Debug: Check Codemagic's signing setup
+          echo ""
+          echo "🔍 Checking Codemagic provisioning:"
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "No profiles found"
 
           echo ""
-          echo "🔍 Available certificates:"
-          security find-identity -v -p codesigning || echo "No certificates found"
-
-          echo ""
-          echo "🔍 Checking keychain:"
-          security list-keychains
+          echo "🔍 Checking certificates:"
+          security find-identity -v -p codesigning 2>/dev/null || echo "No certificates found"
 
           # Create build directory
           mkdir -p build
 
-          # Build archive with automatic code signing
+          # Build archive - let Codemagic handle signing via ios_signing config
           set -e
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
             -destination generic/platform=iOS \
             -archivePath build/App.xcarchive \
-            -allowProvisioningUpdates \
             archive
 
-          # Verify archive was created
+          # Verify archive
           if [ -d "build/App.xcarchive" ]; then
-            echo "✅ Archive created successfully at build/App.xcarchive"
-            ls -la build/
+            echo "✅ Archive created at build/App.xcarchive"
           else
-            echo "❌ Archive was not created"
+            echo "❌ Archive creation failed"
             exit 1
           fi
       - name: Export IPA for App Store
         script: |
           cd ios/App
           echo "📦 EXPORTING IPA FOR APP STORE..."
-          echo "📄 Export options:"
-          cat exportOptions.plist
 
           # Verify archive exists
           if [ ! -d "build/App.xcarchive" ]; then
-            echo "❌ Archive not found at build/App.xcarchive"
+            echo "❌ Archive not found"
             exit 1
           fi
 
-          echo "🔐 Starting export with signing from exportOptions.plist..."
+          # Create dynamic exportOptions.plist with provisioning profile
+          echo "📄 Creating exportOptions.plist with provisioning profile..."
+          cat > exportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store</string>
+              <key>teamID</key>
+              <string>L8UL93UKHN</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>uploadSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+
+          echo "📄 Export options:"
+          cat exportOptions.plist
+
+          # Export with -allowProvisioningUpdates to let xcodebuild find the profile
           set -e
           xcodebuild -exportArchive \
             -archivePath build/App.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
+            -exportOptionsPlist exportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8 \
+            -authenticationKeyID ${APP_STORE_CONNECT_KEY_IDENTIFIER} \
+            -authenticationKeyIssuerID ${APP_STORE_CONNECT_ISSUER_ID}
 
-          # Verify IPA was created
+          # Verify IPA
           if [ -f "build/ipa/App.ipa" ]; then
-            echo "✅ IPA created successfully"
-            ls -la build/ipa/
+            echo "✅ IPA exported successfully"
+            ls -lh build/ipa/
           else
-            echo "❌ IPA was not created"
+            echo "❌ IPA export failed"
             exit 1
           fi
     artifacts:
