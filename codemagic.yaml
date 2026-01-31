@@ -210,9 +210,15 @@ workflows:
       - name: Concatenate App Store Connect private key
         script: |
           echo "🔑 Reconstructing App Store Connect private key from parts..."
-          export APP_STORE_CONNECT_PRIVATE_KEY="${APP_STORE_CONNECT_PRIVATE_KEY_PART1}${APP_STORE_CONNECT_PRIVATE_KEY_PART2}${APP_STORE_CONNECT_PRIVATE_KEY_PART3}${APP_STORE_CONNECT_PRIVATE_KEY_PART4}${APP_STORE_CONNECT_PRIVATE_KEY_PART5}${APP_STORE_CONNECT_PRIVATE_KEY_PART6}"
-          echo "✅ Private key reconstructed"
-          echo "Key starts with: $(echo $APP_STORE_CONNECT_PRIVATE_KEY | head -c 30)..."
+          CONCATENATED_KEY="${APP_STORE_CONNECT_PRIVATE_KEY_PART1}${APP_STORE_CONNECT_PRIVATE_KEY_PART2}${APP_STORE_CONNECT_PRIVATE_KEY_PART3}${APP_STORE_CONNECT_PRIVATE_KEY_PART4}${APP_STORE_CONNECT_PRIVATE_KEY_PART5}${APP_STORE_CONNECT_PRIVATE_KEY_PART6}"
+
+          # Write to Codemagic environment so it persists to publishing phase
+          echo "APP_STORE_CONNECT_PRIVATE_KEY<<EOF" >> $CM_ENV
+          echo "$CONCATENATED_KEY" >> $CM_ENV
+          echo "EOF" >> $CM_ENV
+
+          echo "✅ Private key reconstructed and saved to CM_ENV"
+          echo "Key starts with: $(echo $CONCATENATED_KEY | head -c 30)..."
     artifacts:
       - ios/App/build/*.ipa
       - ios/App/build/*.xcarchive
