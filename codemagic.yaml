@@ -10,7 +10,12 @@ workflows:
       vars:
         APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
         APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
+        APP_STORE_CONNECT_PRIVATE_KEY_PART1: $APP_STORE_CONNECT_PRIVATE_KEY_PART1
+        APP_STORE_CONNECT_PRIVATE_KEY_PART2: $APP_STORE_CONNECT_PRIVATE_KEY_PART2
+        APP_STORE_CONNECT_PRIVATE_KEY_PART3: $APP_STORE_CONNECT_PRIVATE_KEY_PART3
+        APP_STORE_CONNECT_PRIVATE_KEY_PART4: $APP_STORE_CONNECT_PRIVATE_KEY_PART4
+        APP_STORE_CONNECT_PRIVATE_KEY_PART5: $APP_STORE_CONNECT_PRIVATE_KEY_PART5
+        APP_STORE_CONNECT_PRIVATE_KEY_PART6: $APP_STORE_CONNECT_PRIVATE_KEY_PART6
       node: 20.9.0
       xcode: latest
       cocoapods: default
@@ -202,6 +207,12 @@ workflows:
             find . -name "*.ipa" -type f
             exit 1
           fi
+      - name: Concatenate App Store Connect private key
+        script: |
+          echo "🔑 Reconstructing App Store Connect private key from parts..."
+          export APP_STORE_CONNECT_PRIVATE_KEY="${APP_STORE_CONNECT_PRIVATE_KEY_PART1}${APP_STORE_CONNECT_PRIVATE_KEY_PART2}${APP_STORE_CONNECT_PRIVATE_KEY_PART3}${APP_STORE_CONNECT_PRIVATE_KEY_PART4}${APP_STORE_CONNECT_PRIVATE_KEY_PART5}${APP_STORE_CONNECT_PRIVATE_KEY_PART6}"
+          echo "✅ Private key reconstructed"
+          echo "Key starts with: $(echo $APP_STORE_CONNECT_PRIVATE_KEY | head -c 30)..."
     artifacts:
       - ios/App/build/*.ipa
       - ios/App/build/*.xcarchive
