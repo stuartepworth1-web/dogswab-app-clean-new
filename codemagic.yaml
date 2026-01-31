@@ -141,6 +141,8 @@ workflows:
             -configuration Release \
             -destination generic/platform=iOS \
             -archivePath build/App.xcarchive \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=L8UL93UKHN \
             archive
 
           # Verify archive
