@@ -131,12 +131,32 @@ workflows:
           echo "🔍 Checking certificates:"
           security find-identity -v -p codesigning 2>/dev/null || echo "No certificates found"
 
+          # Create export options plist for xcode-project command
+          echo "📄 Creating exportOptions.plist..."
+          cat > exportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store</string>
+              <key>teamID</key>
+              <string>L8UL93UKHN</string>
+              <key>uploadSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+
           # Use Codemagic's native xcode-project command which handles signing automatically
           set -e
           xcode-project build-ipa \
             --workspace "App.xcworkspace" \
             --scheme "App" \
-            --config "Release"
+            --config "Release" \
+            --export-options-plist "exportOptions.plist"
 
           echo "✅ Build complete!"
       - name: Verify IPA
