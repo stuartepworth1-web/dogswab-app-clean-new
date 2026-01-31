@@ -175,7 +175,7 @@ workflows:
               <key>teamID</key>
               <string>L8UL93UKHN</string>
               <key>signingStyle</key>
-              <string>manual</string>
+              <string>automatic</string>
               <key>uploadSymbols</key>
               <true/>
               <key>compileBitcode</key>
