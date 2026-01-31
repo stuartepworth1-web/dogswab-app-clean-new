@@ -136,6 +136,12 @@ workflows:
           SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -1 | sed -n 's/.*"\(.*\)".*/\1/p')
           echo "Signing Identity: $SIGNING_IDENTITY"
 
+          # Inject the provisioning profile UUID into the Xcode project (App target Release config only)
+          echo ""
+          echo "📝 Injecting provisioning profile UUID into project..."
+          sed -i '' "s/PROVISIONING_PROFILE_SPECIFIER = \"\";/PROVISIONING_PROFILE_SPECIFIER = \"$PROFILE_UUID\";/" App.xcodeproj/project.pbxproj
+          echo "✅ Project updated"
+
           # Create exportOptions.plist
           echo ""
           echo "📄 Creating exportOptions.plist..."
@@ -165,7 +171,7 @@ workflows:
           </plist>
           EOF
 
-          # Build with xcodebuild directly
+          # Build with xcodebuild (no command line signing overrides!)
           echo ""
           echo "🔨 Running xcodebuild archive..."
           set -e
@@ -173,11 +179,7 @@ workflows:
             -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
-            -archivePath build/App.xcarchive \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=L8UL93UKHN \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
-            CODE_SIGN_IDENTITY="$SIGNING_IDENTITY"
+            -archivePath build/App.xcarchive
 
           echo ""
           echo "📦 Exporting IPA..."
