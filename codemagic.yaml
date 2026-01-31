@@ -118,20 +118,26 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios/App
-          echo "🏗️ BUILDING IOS APP WITH CODEMAGIC NATIVE COMMAND..."
+          echo "🏗️ BUILDING IOS APP WITH MANUAL XCODEBUILD..."
           echo "Bundle ID: com.dogswab.app"
           echo "Team ID: L8UL93UKHN"
 
-          # Debug: Check Codemagic's signing setup
+          # Find the provisioning profile UUID from Codemagic
           echo ""
-          echo "🔍 Checking Codemagic provisioning:"
-          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "No profiles found"
+          echo "🔍 Extracting provisioning profile UUID..."
+          PROFILE_PATH=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision | head -1)
+          echo "Profile path: $PROFILE_PATH"
 
+          # Extract UUID from the profile
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< $(security cms -D -i "$PROFILE_PATH"))
+          echo "Profile UUID: $PROFILE_UUID"
+
+          # Get the signing identity
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -1 | sed -n 's/.*"\(.*\)".*/\1/p')
+          echo "Signing Identity: $SIGNING_IDENTITY"
+
+          # Create exportOptions.plist
           echo ""
-          echo "🔍 Checking certificates:"
-          security find-identity -v -p codesigning 2>/dev/null || echo "No certificates found"
-
-          # Create export options plist for xcode-project command
           echo "📄 Creating exportOptions.plist..."
           cat > exportOptions.plist << EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -142,6 +148,15 @@ workflows:
               <string>app-store</string>
               <key>teamID</key>
               <string>L8UL93UKHN</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>com.dogswab.app</key>
+                  <string>$PROFILE_UUID</string>
+              </dict>
+              <key>signingCertificate</key>
+              <string>Apple Distribution</string>
+              <key>signingStyle</key>
+              <string>manual</string>
               <key>uploadSymbols</key>
               <true/>
               <key>compileBitcode</key>
@@ -150,30 +165,44 @@ workflows:
           </plist>
           EOF
 
-          # Use Codemagic's native xcode-project command which handles signing automatically
+          # Build with xcodebuild directly
+          echo ""
+          echo "🔨 Running xcodebuild archive..."
           set -e
-          xcode-project build-ipa \
-            --workspace "App.xcworkspace" \
-            --scheme "App" \
-            --config "Release" \
-            --export-options-plist "exportOptions.plist"
+          xcodebuild archive \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath build/App.xcarchive \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM=L8UL93UKHN \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
+            CODE_SIGN_IDENTITY="$SIGNING_IDENTITY"
+
+          echo ""
+          echo "📦 Exporting IPA..."
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportPath build \
+            -exportOptionsPlist exportOptions.plist
 
           echo "✅ Build complete!"
       - name: Verify IPA
         script: |
           echo "📦 VERIFYING IPA..."
-          # xcode-project build-ipa creates the IPA in build/ios/ipa/
-          if [ -f "build/ios/ipa/App.ipa" ]; then
+          cd ios/App
+          if [ -f "build/App.ipa" ]; then
             echo "✅ IPA created successfully"
-            ls -lh build/ios/ipa/
+            ls -lh build/
+            unzip -l build/App.ipa | head -20
           else
             echo "🔍 Searching for IPA..."
             find . -name "*.ipa" -type f
             exit 1
           fi
     artifacts:
-      - build/ios/ipa/*.ipa
-      - build/ios/xcarchive/*.xcarchive
+      - ios/App/build/*.ipa
+      - ios/App/build/*.xcarchive
       - /tmp/xcodebuild_logs/*.log
     publishing:
       email:
