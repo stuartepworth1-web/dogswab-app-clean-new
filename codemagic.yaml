@@ -118,7 +118,7 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios/App
-          echo "🏗️ BUILDING IOS APP..."
+          echo "🏗️ BUILDING IOS APP WITH CODEMAGIC NATIVE COMMAND..."
           echo "Bundle ID: com.dogswab.app"
           echo "Team ID: L8UL93UKHN"
 
@@ -131,85 +131,30 @@ workflows:
           echo "🔍 Checking certificates:"
           security find-identity -v -p codesigning 2>/dev/null || echo "No certificates found"
 
-          # Create build directory
-          mkdir -p build
-
-          # Build archive - let Codemagic handle signing via ios_signing config
+          # Use Codemagic's native xcode-project command which handles signing automatically
           set -e
-          xcodebuild -workspace App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -destination generic/platform=iOS \
-            -archivePath build/App.xcarchive \
-            -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=L8UL93UKHN \
-            archive
+          xcode-project build-ipa \
+            --workspace "App.xcworkspace" \
+            --scheme "App" \
+            --config "Release"
 
-          # Verify archive
-          if [ -d "build/App.xcarchive" ]; then
-            echo "✅ Archive created at build/App.xcarchive"
-          else
-            echo "❌ Archive creation failed"
-            exit 1
-          fi
-      - name: Export IPA for App Store
+          echo "✅ Build complete!"
+      - name: Verify IPA
         script: |
-          cd ios/App
-          echo "📦 EXPORTING IPA FOR APP STORE..."
-
-          # Verify archive exists
-          if [ ! -d "build/App.xcarchive" ]; then
-            echo "❌ Archive not found"
-            exit 1
-          fi
-
-          # Create dynamic exportOptions.plist with provisioning profile
-          echo "📄 Creating exportOptions.plist with provisioning profile..."
-          cat > exportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store</string>
-              <key>teamID</key>
-              <string>L8UL93UKHN</string>
-              <key>signingStyle</key>
-              <string>automatic</string>
-              <key>uploadSymbols</key>
-              <true/>
-              <key>compileBitcode</key>
-              <false/>
-          </dict>
-          </plist>
-          EOF
-
-          echo "📄 Export options:"
-          cat exportOptions.plist
-
-          # Export with -allowProvisioningUpdates to let xcodebuild find the profile
-          set -e
-          xcodebuild -exportArchive \
-            -archivePath build/App.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8 \
-            -authenticationKeyID ${APP_STORE_CONNECT_KEY_IDENTIFIER} \
-            -authenticationKeyIssuerID ${APP_STORE_CONNECT_ISSUER_ID}
-
-          # Verify IPA
-          if [ -f "build/ipa/App.ipa" ]; then
-            echo "✅ IPA exported successfully"
-            ls -lh build/ipa/
+          echo "📦 VERIFYING IPA..."
+          # xcode-project build-ipa creates the IPA in build/ios/ipa/
+          if [ -f "build/ios/ipa/App.ipa" ]; then
+            echo "✅ IPA created successfully"
+            ls -lh build/ios/ipa/
           else
-            echo "❌ IPA export failed"
+            echo "🔍 Searching for IPA..."
+            find . -name "*.ipa" -type f
             exit 1
           fi
     artifacts:
-      - ios/App/build/App.xcarchive
-      - ios/App/build/logs/*.log
-      - ios/App/build/ipa/*.ipa
+      - build/ios/ipa/*.ipa
+      - build/ios/xcarchive/*.xcarchive
+      - /tmp/xcodebuild_logs/*.log
     publishing:
       email:
         recipients:
