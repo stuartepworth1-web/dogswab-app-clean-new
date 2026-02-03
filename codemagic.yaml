@@ -7,8 +7,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.dogswab.app
-      groups:
-        - app_store_credentials
       node: 20.9.0
       xcode: latest
       cocoapods: default
