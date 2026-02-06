@@ -208,9 +208,9 @@ workflows:
           echo "Part 1 length: ${#APP_STORE_CONNECT_PRIVATE_KEY_PART1}"
           echo "Part 1 first 50 chars: ${APP_STORE_CONNECT_PRIVATE_KEY_PART1:0:50}"
 
-          # Concatenate and interpret escape sequences (in case newlines are stored as \n)
-          # Using echo -e to interpret escape sequences, then save to file
-          echo -e "${APP_STORE_CONNECT_PRIVATE_KEY_PART1}${APP_STORE_CONNECT_PRIVATE_KEY_PART2}${APP_STORE_CONNECT_PRIVATE_KEY_PART3}${APP_STORE_CONNECT_PRIVATE_KEY_PART4}${APP_STORE_CONNECT_PRIVATE_KEY_PART5}${APP_STORE_CONNECT_PRIVATE_KEY_PART6}" > /tmp/app_store_key.p8
+          # Use printf instead of echo -e for better control
+          # Concatenate all parts and interpret escape sequences
+          printf "%b" "${APP_STORE_CONNECT_PRIVATE_KEY_PART1}${APP_STORE_CONNECT_PRIVATE_KEY_PART2}${APP_STORE_CONNECT_PRIVATE_KEY_PART3}${APP_STORE_CONNECT_PRIVATE_KEY_PART4}${APP_STORE_CONNECT_PRIVATE_KEY_PART5}${APP_STORE_CONNECT_PRIVATE_KEY_PART6}" > /tmp/app_store_key.p8
 
           # Debug: Show key structure
           echo "📋 Reconstructed key info:"
@@ -219,16 +219,25 @@ workflows:
           echo "  First line: $(head -n 1 /tmp/app_store_key.p8)"
           echo "  Last line: $(tail -n 1 /tmp/app_store_key.p8)"
 
-          # Show a bit more detail
-          echo "  Line 2 (first base64): $(sed -n '2p' /tmp/app_store_key.p8)"
+          # Show a bit more detail (safely)
+          echo "  Line count check: $(cat /tmp/app_store_key.p8 | wc -l)"
 
           # Validate PEM format
           if grep -q "BEGIN PRIVATE KEY" /tmp/app_store_key.p8 && grep -q "END PRIVATE KEY" /tmp/app_store_key.p8; then
             echo "✅ Key has valid PEM markers"
+
+            # Count lines between BEGIN and END
+            LINE_COUNT=$(sed -n '/BEGIN PRIVATE KEY/,/END PRIVATE KEY/p' /tmp/app_store_key.p8 | wc -l)
+            echo "  Lines between markers: $LINE_COUNT"
+
+            # A valid P8 key should have at least 5 lines (BEGIN, base64 content, END)
+            if [ "$LINE_COUNT" -lt 5 ]; then
+              echo "⚠️  WARNING: Key seems too short (only $LINE_COUNT lines)"
+            fi
           else
             echo "❌ ERROR: Missing PEM markers!"
-            echo "Full content:"
-            cat /tmp/app_store_key.p8
+            echo "Full content (first 500 chars):"
+            head -c 500 /tmp/app_store_key.p8
             exit 1
           fi
 
