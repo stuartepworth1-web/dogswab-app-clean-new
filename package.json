@@ -1,20 +1,20 @@
 {
-  "name": "DOGSWAB - Pet Health Assistant",
+  "name": "DOGSWAB - Pet Health Document Manager",
   "private": true,
-  "version": "1.0.674",
+  "version": "1.0.465",
   "type": "module",
-  "description": "Pet health education app connecting owners with veterinarians and insurance providers",
+  "description": "Veterinary document management system for storing medical records, tracking health reminders, and finding licensed veterinarians",
   "keywords": [
-    "pet health",
-    "pet education",
-    "veterinary directory",
-    "pet care information",
-    "animal health education",
-    "veterinary",
+    "pet medical records",
+    "veterinary documents",
+    "vaccination tracker",
+    "pet health reminders",
     "vet finder",
-    "pet insurance quotes",
-    "educational app",
-    "pet wellness information"
+    "pet organizer",
+    "medical document storage",
+    "veterinary directory",
+    "pet insurance",
+    "health record manager"
   ],
   "author": "DOGSWAB Team",
   "scripts": {
