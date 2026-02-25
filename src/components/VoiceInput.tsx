@@ -127,26 +127,34 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({ onTranscript, isListenin
       {/* Voice Input Button */}
       <button
         onClick={toggleRecording}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          if (!permissionDenied) {
+            toggleRecording();
+          }
+        }}
         disabled={permissionDenied}
-        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-          isRecording 
-            ? 'bg-red-500 text-white animate-pulse shadow-lg hover:scale-105' 
-            : permissionDenied 
+        className={`w-12 h-12 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all touch-manipulation ${
+          isRecording
+            ? 'bg-red-500 text-white animate-pulse shadow-lg active:scale-95'
+            : permissionDenied
               ? 'glass-card text-gray-400 cursor-not-allowed opacity-50'
-              : 'glass-card text-dogswab-navy hover:bg-dogswab-mint/20 shadow-sm hover:scale-105'
+              : 'glass-card text-dogswab-navy hover:bg-dogswab-mint/20 shadow-sm active:scale-95'
         }`}
         title={isRecording ? 'Stop recording' : 'Start voice input'}
+        aria-label={isRecording ? 'Stop recording' : 'Start voice input'}
       >
-        {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+        {isRecording ? <MicOff className="w-5 h-5 md:w-4 md:h-4" /> : <Mic className="w-5 h-5 md:w-4 md:h-4" />}
       </button>
 
       {/* Text-to-Speech Button */}
       <button
         onClick={() => speakText('Hello! I\'m your AI pet health assistant. How can I help you today?')}
-        className="w-10 h-10 rounded-full glass-card text-dogswab-navy hover:bg-dogswab-mint/20 shadow-sm flex items-center justify-center transition-all hover:scale-105"
+        className="w-12 h-12 md:w-10 md:h-10 rounded-full glass-card text-dogswab-navy hover:bg-dogswab-mint/20 shadow-sm flex items-center justify-center transition-all active:scale-95 touch-manipulation"
         title="Hear AI introduction"
+        aria-label="Hear AI introduction"
       >
-        <Volume2 className="w-4 h-4" />
+        <Volume2 className="w-5 h-5 md:w-4 md:h-4" />
       </button>
 
       {/* Recording indicator */}

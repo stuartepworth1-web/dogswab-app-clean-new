@@ -21,10 +21,9 @@ import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import PetDocuments from './components/PetDocuments';
 import VetHistory from './components/VetHistory';
 import HealthRecommendations from './components/HealthRecommendations';
+import SplashScreen from './components/SplashScreen';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateAIResponse, categorizeMessage } from './services/aiService';
-import { createCheckoutSession, redirectToCheckout } from './services/stripeService';
-import { subscriptionPlans } from './services/stripeService';
 import { Pet, Chat, Message, Subscription, HealthRecord, VetAppointment } from './types';
 import { ReminderService } from './services/reminderService';
 import { ReminderPrompt } from './components/ReminderPrompt';
@@ -37,14 +36,17 @@ interface User {
   emailVerified: boolean;
 }
 
-type View = 'chat' | 'pets' | 'health' | 'vet-registration' | 'privacy-policy' | 'documents' | 'vet-history' | 'recommendations';
+type View = 'documents' | 'chat' | 'pets' | 'health' | 'vet-registration' | 'privacy-policy' | 'vet-history' | 'recommendations';
 
 function App() {
+  // Splash Screen
+  const [showSplash, setShowSplash] = useState(true);
+
   // User Authentication
   const [user, setUser] = useLocalStorage<User | null>('dogswab-user', null);
   const [showAuth, setShowAuth] = useState(false);
   const [showMedicalDisclaimer, setShowMedicalDisclaimer] = useLocalStorage<boolean>('dogswab-medical-disclaimer-accepted', false);
-  
+
   // Legal & Accessibility
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
@@ -66,7 +68,7 @@ function App() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [selectedHealthPetId, setSelectedHealthPetId] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<View>('chat');
+  const [currentView, setCurrentView] = useState<View>('documents');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -301,30 +303,40 @@ function App() {
 
   const handleSubscribe = useCallback(async (tier: string) => {
     try {
-      // Find the selected plan
-      const selectedPlan = subscriptionPlans.find(plan => plan.id === tier);
-      if (!selectedPlan) {
-        throw new Error('Invalid subscription plan selected');
-      }
+      // On mobile, ALWAYS use native In-App Purchases (Apple requirement)
+      if (isMobile) {
+        console.log('Using native IAP for mobile subscription:', tier);
+        const { handlePurchaseFromAppStore } = await import('./services/iapService');
+        const result = await handlePurchaseFromAppStore(tier);
 
-      console.log('Starting subscription for:', selectedPlan.name, 'Price ID:', selectedPlan.priceId);
-      
-      // Check if price ID is configured
-      if (selectedPlan.priceId.startsWith('REPLACE_WITH_')) {
-        alert('⚠️ Stripe products not configured yet!\n\nPlease create the Stripe products first and update the Price IDs.\n\nSee STRIPE_SETUP.md for instructions.');
+        if (result.success) {
+          // Update subscription in state
+          const consultationsLimit = tier === 'basic' ? 50 : -1;
+          setSubscription(prev => ({
+            ...prev,
+            tier: tier as 'free' | 'basic' | 'premium' | 'pro',
+            status: 'active',
+            consultationsLimit,
+            consultationsUsed: 0,
+            currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          }));
+
+          setShowSubscriptionModal(false);
+          alert(`✅ Subscription activated!\n\nPlan: ${tier}\nThank you for subscribing to DOGSWAB!`);
+        } else {
+          throw new Error(result.error || 'Purchase failed');
+        }
         return;
       }
 
-      // Redirect to Stripe Checkout
-      await createCheckoutSession(selectedPlan.priceId, 'user_123');
-      
-      // The redirect happens automatically, so we don't need to do anything else here
-      // The success handling will happen when the user returns from Stripe
+      // Web version: subscriptions only available in iOS App
+      alert('⚠️ Subscriptions are only available in the iOS app.\n\nPlease download DOGSWAB from the App Store to subscribe.');
+
     } catch (error) {
       console.error('Subscription error:', error);
-      alert(`Subscription failed: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
+      alert(`Subscription failed: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again or contact support@dogswab.com`);
     }
-  }, []);
+  }, [isMobile, setSubscription, user]);
 
   const handleVetRegistrationSuccess = useCallback((vetId: string) => {
     alert(`🎉 Veterinarian registration successful! 
@@ -373,6 +385,11 @@ Expected monthly earnings: $2,000-$8,000`);
     setShowInsuranceQuotes(true);
   }, []);
 
+  // Show splash screen on app startup
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   // Show onboarding if user hasn't completed it and has no pets
   if (!hasCompletedOnboarding && pets.length === 0) {
     return (
@@ -383,7 +400,7 @@ Expected monthly earnings: $2,000-$8,000`);
             onAddPet={handleOnboardingComplete}
             onSkip={handleSkipOnboarding}
           />
-          
+
           {/* Medical Disclaimer */}
           <MedicalDisclaimer
             isOpen={showMedicalDisclaimer}
@@ -397,7 +414,7 @@ Expected monthly earnings: $2,000-$8,000`);
 
   return (
     <ErrorBoundary>
-      <div className="flex h-screen" style={{ backgroundColor: '#2d2f63' }}>
+      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#2d2f63' }}>
         <OfflineIndicator />
         
         <Sidebar
@@ -441,8 +458,18 @@ Expected monthly earnings: $2,000-$8,000`);
           consultationsLimit={subscription.consultationsLimit}
         />
 
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {currentView === 'chat' ? (
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full max-w-full">
+          {currentView === 'documents' ? (
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-white">
+              <div className="max-w-7xl mx-auto">
+                <PetDocuments
+                  userId={user?.id || 'guest'}
+                  pets={pets}
+                  isPremium={subscription.tier === 'premium'}
+                />
+              </div>
+            </div>
+          ) : currentView === 'chat' ? (
             <ChatInterface
               messages={selectedChat?.messages || []}
               pets={pets}
@@ -481,13 +508,13 @@ Expected monthly earnings: $2,000-$8,000`);
               onAddPet={addPet}
               onUpdatePet={updatePet}
               onDeletePet={deletePet}
-              onBack={() => setCurrentView('chat')}
+              onBack={() => setCurrentView('documents')}
             />
           ) : (currentView === 'health' && selectedHealthPet) ? (
             <HealthDashboard
               pet={selectedHealthPet}
               healthRecords={healthRecords}
-              onBack={() => setCurrentView('chat')}
+              onBack={() => setCurrentView('documents')}
               onAddRecord={addHealthRecord}
               onBookAppointment={bookAppointment}
               onInsuranceCommission={handleInsuranceCommission}
@@ -521,7 +548,7 @@ Expected monthly earnings: $2,000-$8,000`);
                 </button>
                 <div className="mt-6">
                   <button
-                    onClick={() => setCurrentView('chat')}
+                    onClick={() => setCurrentView('documents')}
                     className="text-gpt-text-secondary hover:text-gpt-text"
                   >
                     ← Back to Chat
@@ -530,28 +557,12 @@ Expected monthly earnings: $2,000-$8,000`);
               </div>
             </div>
           ) : currentView === 'privacy-policy' ? (
-            <PrivacyPolicyPage onBack={() => setCurrentView('chat')} />
-          ) : currentView === 'documents' ? (
-            <div className="flex-1 overflow-y-auto p-8 bg-white">
-              <div className="max-w-7xl mx-auto">
-                <button
-                  onClick={() => setCurrentView('chat')}
-                  className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
-                >
-                  ← Back to Chat
-                </button>
-                <PetDocuments
-                  userId={user?.id || 'guest'}
-                  pets={pets}
-                  isPremium={subscription.tier === 'premium'}
-                />
-              </div>
-            </div>
+            <PrivacyPolicyPage onBack={() => setCurrentView('documents')} />
           ) : currentView === 'vet-history' ? (
             <div className="flex-1 overflow-y-auto p-8 bg-white">
               <div className="max-w-7xl mx-auto">
                 <button
-                  onClick={() => setCurrentView('chat')}
+                  onClick={() => setCurrentView('documents')}
                   className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
                 >
                   ← Back to Chat
@@ -567,7 +578,7 @@ Expected monthly earnings: $2,000-$8,000`);
             <div className="flex-1 overflow-y-auto p-8 bg-white">
               <div className="max-w-7xl mx-auto">
                 <button
-                  onClick={() => setCurrentView('chat')}
+                  onClick={() => setCurrentView('documents')}
                   className="mb-6 text-gray-600 hover:text-gray-900 font-medium"
                 >
                   ← Back to Chat

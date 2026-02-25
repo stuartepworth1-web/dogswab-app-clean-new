@@ -81,7 +81,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-screen bg-white overflow-hidden">
+    <div className="flex-1 flex flex-col h-screen bg-white overflow-hidden w-full max-w-full">
       {/* Clean Professional Header */}
       <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm">
         <div className="flex items-center justify-between w-full">
@@ -94,11 +94,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 liquid-glass rounded-2xl flex items-center justify-center">
-              <span className="text-xl">🐾</span>
+              <span className="text-xl">💬</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold text-dogswab-navy">DOGSWAB</h1>
-              <p className="text-xs text-dogswab-navy/70">Pet Health Assistant</p>
+              <h1 className="text-lg font-semibold text-dogswab-navy">AI Educational Assistant</h1>
+              <p className="text-xs text-dogswab-navy/70">General Pet Care Information Only</p>
             </div>
           </div>
           
@@ -120,7 +120,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4" style={{ scrollBehavior: 'smooth' }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full" style={{ scrollBehavior: 'smooth' }}>
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
@@ -141,21 +141,21 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
 
             {/* Professional Quick Actions */}
-            <div className="grid gap-4 mb-6 sm:mb-8 px-4">
+            <div className="grid gap-3 sm:gap-4 mb-6 sm:mb-8 px-2 sm:px-4 max-w-full">
               {quickActions.map((action, index) => (
                 <React.Fragment key={index}>
                   <button
                     onClick={action.onClick}
-                    className="w-full p-4 sm:p-6 liquid-glass rounded-3xl liquid-card-hover transition-all duration-400 text-left group animate-fade-in"
+                    className="w-full p-3 sm:p-4 lg:p-6 liquid-glass rounded-2xl sm:rounded-3xl liquid-card-hover transition-all duration-400 text-left group animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
                       <div className={`w-12 h-12 sm:w-14 sm:h-14 ${action.color} rounded-3xl flex items-center justify-center text-white shadow-lg flex-shrink-0 group-hover:scale-110 transition-all duration-400`}>
                         {action.icon}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-dogswab-navy text-base sm:text-lg">{action.title}</h3>
-                        <p className="text-dogswab-navy/60 mt-1 font-medium text-sm sm:text-base">{action.subtitle}</p>
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <h3 className="font-semibold text-dogswab-navy text-sm sm:text-base lg:text-lg truncate">{action.title}</h3>
+                        <p className="text-dogswab-navy/60 mt-0.5 sm:mt-1 font-medium text-xs sm:text-sm lg:text-base truncate">{action.subtitle}</p>
                       </div>
                       <div className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center flex-shrink-0 group-hover:bg-dogswab-mint group-hover:text-white transition-all duration-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, Star, Video, Phone, X, CreditCard, Shield } from 'lucide-react';
 import { Veterinarian, VetAppointment, Pet } from '../types';
-import { createPaymentIntent, confirmPayment } from '../services/stripeService';
 import { bookAppointment } from '../services/vetService';
 
 interface VetBookingProps {
@@ -78,16 +77,11 @@ const VetBooking: React.FC<VetBookingProps> = ({ pet, onClose, onBookAppointment
       const commission = price * 0.15; // 15% commission
       const vetPayout = price - commission;
 
-      // Create payment intent
-      const paymentIntent = await createPaymentIntent(
-        price * 100, // Convert to cents
-        `Vet appointment for ${pet.name} with ${selectedVet.name}`
-      );
+      // Payment handled through Apple In-App Purchase or direct vet clinic payment
+      // This is just for booking confirmation
+      const paymentSucceeded = true;
 
-      // Confirm payment (mock)
-      const paymentResult = await confirmPayment(paymentIntent.clientSecret, paymentMethod);
-
-      if (paymentResult.paymentIntent?.status === 'succeeded') {
+      if (paymentSucceeded) {
         // Book the appointment
         const appointment: Omit<VetAppointment, 'id'> = {
           petId: pet.id,

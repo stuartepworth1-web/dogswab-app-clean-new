@@ -313,8 +313,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 safe-area-top safe-area-bottom" style={{ backgroundColor: '#2d2f63' }}>
-      <div className="max-w-2xl w-full mx-auto">
+    <div className="min-h-screen flex items-center justify-center p-4 safe-area-top safe-area-bottom overflow-y-auto" style={{ backgroundColor: '#2d2f63' }}>
+      <div className="max-w-2xl w-full mx-auto my-4">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -345,7 +345,7 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         </div>
 
         {/* Main Card */}
-        <div className="liquid-glass rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/30 min-h-[400px] sm:min-h-[450px] flex flex-col justify-between mx-4 sm:mx-0">
+        <div className="liquid-glass rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/30 max-h-[80vh] overflow-y-auto flex flex-col justify-between mx-4 sm:mx-0">
           {/* Skip Button */}
           {currentStep !== 'complete' && (
             <div className="flex justify-end mb-4">

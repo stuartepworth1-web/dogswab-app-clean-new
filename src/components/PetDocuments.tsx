@@ -123,121 +123,129 @@ export default function PetDocuments({ userId, pets, isPremium }: PetDocumentsPr
   const petDocuments = documents.filter(d => d.pet_id === selectedPet);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Pet Documents</h2>
-          <p className="text-gray-600 mt-1">
-            Upload and manage your pet's medical records, vaccination certificates, and more
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 pb-8">
+      <div className="backdrop-blur-xl bg-white/70 border-b border-white/40 px-6 py-4 shadow-sm sticky top-0 z-10">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Medical Documents</h2>
+            <p className="text-gray-600 mt-1">
+              Store and manage your pet's medical records securely
+            </p>
+          </div>
+          <button
+            onClick={() => canUploadMore ? setShowUploadModal(true) : alert('Upgrade to Premium for unlimited document uploads')}
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-2xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
+          >
+            <Plus className="w-5 h-5" />
+            Upload
+          </button>
         </div>
-        <button
-          onClick={() => canUploadMore ? setShowUploadModal(true) : alert('Upgrade to Premium for unlimited document uploads')}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Upload Document
-        </button>
       </div>
 
-      {pets.length > 1 && (
-        <div className="flex gap-2">
-          {pets.map(pet => (
-            <button
-              key={pet.id}
-              onClick={() => setSelectedPet(pet.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                selectedPet === pet.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {pet.name}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {!isPremium && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <p className="text-amber-800">
-            <strong>Free Plan:</strong> {petDocuments.length}/{freeLimit} documents used.
-            <button className="ml-2 text-amber-900 underline font-medium">
-              Upgrade to Premium
-            </button> for unlimited document storage.
-          </p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {petDocuments.map(doc => (
-          <div
-            key={doc.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{doc.title}</h3>
-                  <span className="text-xs text-gray-500 capitalize">
-                    {doc.document_type.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
+      <div className="max-w-7xl mx-auto px-6 mt-6 space-y-6">
+        {pets.length > 1 && (
+          <div className="flex gap-2 flex-wrap">
+            {pets.map(pet => (
               <button
-                onClick={() => deleteDocument(doc.id)}
-                className="text-gray-400 hover:text-red-600 transition-colors"
+                key={pet.id}
+                onClick={() => setSelectedPet(pet.id)}
+                className={`px-5 py-2.5 rounded-2xl font-semibold transition-all duration-300 ${
+                  selectedPet === pet.id
+                    ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg scale-105'
+                    : 'backdrop-blur-xl bg-white/70 text-gray-700 hover:bg-white/90 border border-white/40'
+                }`}
               >
-                <X className="w-5 h-5" />
+                {pet.name}
               </button>
-            </div>
-
-            <div className="space-y-2 text-sm text-gray-600">
-              <p><strong>File:</strong> {doc.file_name}</p>
-              <p><strong>Size:</strong> {formatFileSize(doc.file_size)}</p>
-              <p><strong>Uploaded:</strong> {new Date(doc.upload_date).toLocaleDateString()}</p>
-              {doc.notes && (
-                <p className="text-gray-700"><strong>Notes:</strong> {doc.notes}</p>
-              )}
-            </div>
-
-            <div className="flex gap-2 mt-4">
-              <a
-                href={doc.file_url}
-                download={doc.file_name}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                Download
-              </a>
-              <a
-                href={doc.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Eye className="w-4 h-4" />
-                View
-              </a>
-            </div>
-          </div>
-        ))}
-
-        {petDocuments.length === 0 && (
-          <div className="col-span-full text-center py-12 text-gray-500">
-            <FileText className="w-16 h-16 mx-auto mb-4 opacity-20" />
-            <p>No documents uploaded yet</p>
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Upload your first document
-            </button>
+            ))}
           </div>
         )}
+
+        {!isPremium && (
+          <div className="backdrop-blur-xl bg-blue-50/50 border border-blue-200/50 rounded-3xl p-5">
+            <p className="text-blue-900 text-sm">
+              <strong>Free Plan:</strong> {petDocuments.length}/{freeLimit} documents used.
+              <button className="ml-2 text-blue-600 underline font-semibold hover:text-blue-700 transition-colors">
+                Upgrade to Premium
+              </button> for unlimited document storage.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {petDocuments.map(doc => (
+            <div
+              key={doc.id}
+              className="backdrop-blur-xl bg-white/70 border border-white/40 rounded-2xl p-5 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-800">{doc.title}</h3>
+                    <span className="text-xs text-gray-600 capitalize font-medium">
+                      {doc.document_type.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => deleteDocument(doc.id)}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong className="text-gray-700">File:</strong> {doc.file_name}</p>
+                <p><strong className="text-gray-700">Size:</strong> {formatFileSize(doc.file_size)}</p>
+                <p><strong className="text-gray-700">Uploaded:</strong> {new Date(doc.upload_date).toLocaleDateString()}</p>
+                {doc.notes && (
+                  <p className="text-gray-700"><strong>Notes:</strong> {doc.notes}</p>
+                )}
+              </div>
+
+              <div className="flex gap-2 mt-4">
+                <a
+                  href={doc.file_url}
+                  download={doc.file_name}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-xl hover:shadow-md transition-all duration-300 font-semibold"
+                >
+                  <Download className="w-4 h-4" />
+                  Download
+                </a>
+                <a
+                  href={doc.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 backdrop-blur-xl bg-white/70 text-gray-700 rounded-xl hover:bg-white/90 transition-all duration-300 font-semibold border border-white/40"
+                >
+                  <Eye className="w-4 h-4" />
+                  View
+                </a>
+              </div>
+            </div>
+          ))}
+
+          {petDocuments.length === 0 && (
+            <div className="col-span-full text-center py-16">
+              <div className="backdrop-blur-xl bg-white/50 border border-white/40 rounded-3xl p-12 max-w-md mx-auto">
+                <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                <p className="text-gray-600 font-medium mb-4">No documents uploaded yet</p>
+                <button
+                  onClick={() => setShowUploadModal(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-2xl hover:shadow-lg transition-all duration-300 font-semibold"
+                >
+                  Upload your first document
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {showUploadModal && (

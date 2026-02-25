@@ -8,9 +8,13 @@
   html {
     scroll-behavior: smooth;
     height: 100%;
+    width: 100%;
     overflow-x: hidden;
+    position: fixed;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
-  
+
   body {
     font-family: 'Circular Std', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background: #f8fafc;
@@ -21,14 +25,19 @@
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;
     min-height: 100vh;
+    width: 100%;
     height: 100%;
     overflow-x: hidden;
-    position: relative;
+    position: fixed;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
 
   #root {
+    width: 100%;
     height: 100vh;
     overflow: hidden;
+    position: relative;
   }
 
   * {
@@ -262,23 +271,31 @@
   animation: shimmer 2s infinite;
 }
 
-/* iOS Native Scrollbar */
+/* Custom Scrollbar - Visible and Smooth */
 ::-webkit-scrollbar {
-  width: 3px;
-  height: 3px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  background: rgba(45, 47, 99, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(45, 47, 99, 0.5);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(45, 47, 99, 0.3) rgba(0, 0, 0, 0.05);
 }
 
 /* iOS Text Selection */
@@ -584,7 +601,7 @@ select {
   body {
     font-size: 16px; /* Prevent zoom on iOS */
   }
-  
+
   input[type="text"],
   input[type="email"],
   input[type="tel"],
@@ -592,6 +609,101 @@ select {
   textarea {
     font-size: 16px; /* Prevent zoom on iOS */
   }
+}
+
+/* iPhone 17 Pro Max and larger device optimization (430x932 and up) */
+@media (min-width: 390px) and (min-height: 844px) {
+  /* Improve readability on larger screens */
+  body {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* Larger touch targets for better usability */
+  button {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 24px;
+  }
+
+  input, select, textarea {
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+
+  /* Better spacing on larger screens */
+  .ios-card {
+    padding: 20px;
+    margin: 16px;
+  }
+
+  /* Improved typography scale for larger displays */
+  .ios-title-1 {
+    font-size: 32px;
+    line-height: 38px;
+  }
+
+  .ios-title-2 {
+    font-size: 26px;
+    line-height: 32px;
+  }
+
+  .ios-body {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+/* iPad Air 11-inch optimization */
+@media (min-width: 768px) and (min-height: 1024px) {
+  body {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  /* Even larger touch targets for iPad */
+  button {
+    min-height: 52px;
+    padding: 14px 28px;
+  }
+
+  input, select, textarea {
+    min-height: 52px;
+    padding: 14px 18px;
+  }
+
+  /* Better container sizing for tablet */
+  .container {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  /* Improved card layout for tablets */
+  .ios-card {
+    padding: 24px;
+    margin: 20px;
+  }
+}
+
+/* iOS Zoom Prevention */
+* {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS zoom on input focus */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+  touch-action: manipulation;
+}
+
+/* Prevent zoom on double tap */
+button,
+a,
+div {
+  touch-action: manipulation;
 }
 
 /* High contrast mode support */

@@ -193,7 +193,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {/* Chat History */}
-        <div className="flex-1 overflow-y-auto px-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 min-h-0">
           {/* Reminders Section */}
           <div className="mb-6">
             <h3 className="text-base font-semibold text-dogswab-navy mb-4 flex items-center">
@@ -271,12 +271,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={onVetRegistration}
-            className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-dogswab-navy border border-white/40"
+            className="w-full flex items-center space-x-3 p-4 rounded-3xl bg-gradient-to-r from-blue-500 to-teal-500 hover:shadow-[0_0_30px_rgba(20,184,166,0.5)] transition-all duration-300 text-white shadow-lg"
           >
-            <Stethoscope className="w-6 h-6 text-dogswab-navy" />
+            <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
+              <Stethoscope className="w-5 h-5 text-white" />
+            </div>
             <div className="text-left">
-              <span className="font-semibold block text-base">Join as Veterinarian</span>
-              <p className="text-sm text-dogswab-navy/70 font-medium">Earn $2K-8K/month</p>
+              <span className="font-bold block text-base">Join as Veterinarian</span>
+              <p className="text-sm text-white/90 font-medium">Start earning today</p>
             </div>
           </button>
         </div>

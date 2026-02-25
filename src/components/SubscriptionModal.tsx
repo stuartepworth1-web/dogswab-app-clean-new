@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Check, Crown, Zap, Star } from 'lucide-react';
+import { handlePurchaseFromAppStore, isNativePlatform } from '../services/iapService';
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -15,6 +16,28 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   currentTier
 }) => {
   const [selectedTier, setSelectedTier] = useState<string>('basic');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubscribe = async () => {
+    setIsProcessing(true);
+    try {
+      if (isNativePlatform()) {
+        const result = await handlePurchaseFromAppStore(selectedTier);
+        if (result.success) {
+          onSubscribe(selectedTier);
+        } else {
+          alert(`Purchase failed: ${result.error || 'Unknown error'}`);
+        }
+      } else {
+        onSubscribe(selectedTier);
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      alert('Purchase failed. Please try again or contact support@dogswab.com');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -133,31 +156,46 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           </div>
 
           <div className="mt-8 text-center">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-              <p className="text-xs text-blue-700">
-                <strong>Auto-Renewable Subscriptions:</strong><br/>
+            {/* Prominent Terms & Privacy Notice */}
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-5 mb-6 shadow-lg">
+              <p className="text-sm text-blue-900 font-medium leading-relaxed">
+                <strong className="text-base">Auto-Renewable Subscriptions</strong><br/>
                 • <strong>DOGSWAB Basic Monthly:</strong> $9.99/month<br/>
                 • <strong>DOGSWAB Premium Monthly:</strong> $19.99/month<br/>
                 • <strong>DOGSWAB Pro Monthly:</strong> $49.99/month<br/>
-                Payment charged to iTunes Account. Auto-renews unless cancelled 24 hours before period ends.<br/>
-                <div className="mt-2 space-x-2">
-                  <a href="/terms.html" target="_blank" rel="noopener noreferrer" className="underline text-blue-800 hover:text-blue-900 font-semibold">Terms of Use (EULA)</a>
-                  <span>|</span>
-                  <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="underline text-blue-800 hover:text-blue-900 font-semibold">Privacy Policy</a>
-                </div>
+                <br/>
+                Payment charged to iTunes Account. Auto-renews unless cancelled 24 hours before period ends.
               </p>
+              <div className="mt-4 pt-4 border-t-2 border-blue-300 flex flex-col sm:flex-row gap-3 items-center justify-center">
+                <a
+                  href="/terms.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-md w-full sm:w-auto"
+                >
+                  📄 Terms of Use (EULA)
+                </a>
+                <a
+                  href="/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-md w-full sm:w-auto"
+                >
+                  🔒 Privacy Policy
+                </a>
+              </div>
             </div>
+
             <button
-              onClick={() => onSubscribe(selectedTier)}
-              disabled={currentTier === selectedTier}
-              className="bg-dogswab-mint text-white px-8 py-3 rounded-2xl hover:bg-dogswab-mint-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-lg shadow-lg"
+              onClick={handleSubscribe}
+              disabled={currentTier === selectedTier || isProcessing}
+              className="bg-dogswab-mint text-white px-8 py-4 rounded-2xl hover:bg-dogswab-mint-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold text-lg shadow-xl w-full sm:w-auto"
             >
-              {currentTier === selectedTier ? 'Current Plan' : 'Upgrade Now'}
+              {isProcessing ? 'Processing...' : currentTier === selectedTier ? 'Current Plan' : 'Subscribe via App Store'}
             </button>
-            <p className="text-xs text-dogswab-navy/60 mt-2">
-              Managed by Apple App Store. Cancel in App Store settings.<br/>
-              <a href="/terms.html" className="underline text-dogswab-mint hover:text-dogswab-mint-dark">Terms of Use</a> | 
-              <a href="/privacy.html" className="underline text-dogswab-mint hover:text-dogswab-mint-dark">Privacy Policy</a>
+
+            <p className="text-sm text-dogswab-navy/70 mt-4 font-medium">
+              Subscriptions managed by Apple App Store. Cancel anytime in your device settings.
             </p>
           </div>
         </div>
