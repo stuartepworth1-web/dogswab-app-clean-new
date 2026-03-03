@@ -15,7 +15,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ai: ['@anthropic-ai/sdk'],
           stripe: ['@stripe/stripe-js', 'stripe']
         }
       }
