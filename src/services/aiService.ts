@@ -34,21 +34,39 @@ export const generateAIResponse = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorText = await response.text();
+      console.error('API Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { error: errorText };
+      }
 
       if (response.status === 503) {
         console.log('AI service not configured, using fallback');
         return getFallbackResponse(category, petName || 'your pet');
       }
 
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      throw new Error(errorData.error || `HTTP ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Successful AI response received:', { hasResponse: !!data.response, responseLength: data.response?.length });
     return data.response;
 
   } catch (error) {
     console.error('Error calling AI service:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      name: error instanceof Error ? error.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
 
     if (error instanceof Error) {
       if (error.message.includes('401')) {
