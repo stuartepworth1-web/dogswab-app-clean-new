@@ -12,6 +12,13 @@ export const generateAIResponse = async (
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+    console.log('Environment check:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseAnonKey,
+      url: supabaseUrl?.substring(0, 30) + '...',
+      keyPrefix: supabaseAnonKey?.substring(0, 20) + '...'
+    });
+
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase configuration missing');
       return getFallbackResponse(category, petName || 'your pet');
