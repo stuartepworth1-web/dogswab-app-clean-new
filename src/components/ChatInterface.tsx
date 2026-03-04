@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Menu, Heart, Stethoscope, Camera, Calendar, Shield, Activity, Brain, Plus, AlertTriangle } from 'lucide-react';
+import { Send, Menu, Heart, Stethoscope, Camera, Calendar, Shield, Activity, Brain, Plus, AlertTriangle, Upload, FileText } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Message, Pet } from '../types';
 import { VoiceInput } from './VoiceInput';
@@ -17,6 +17,7 @@ interface ChatInterfaceProps {
   onPhotoAnalysis: () => void;
   onBookVet: () => void;
   onInsuranceQuotes: () => void;
+  onNavigateToDocuments?: () => void;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -29,13 +30,26 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onToggleSidebar,
   onPhotoAnalysis,
   onBookVet,
-  onInsuranceQuotes
+  onInsuranceQuotes,
+  onNavigateToDocuments
 }) => {
   const [input, setInput] = useState('');
+  const [petDocumentCount, setPetDocumentCount] = useState<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const selectedPet = pets.find(pet => pet.id === selectedPetId);
 
   const isMobile = Capacitor.isNativePlatform();
+
+  // Check for documents when pet changes
+  useEffect(() => {
+    if (selectedPetId) {
+      const storedDocs = localStorage.getItem(`pet_documents_${selectedPetId}`);
+      const docs = storedDocs ? JSON.parse(storedDocs) : [];
+      setPetDocumentCount(docs.length);
+    } else {
+      setPetDocumentCount(0);
+    }
+  }, [selectedPetId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -120,7 +134,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full" style={{ scrollBehavior: 'smooth' }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
@@ -271,8 +285,30 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       {/* Professional Input Bar */}
       <div className="liquid-glass border-t border-white/30 p-4 sm:p-6 safe-area-bottom flex-shrink-0 shadow-2xl">
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto w-full">
+          {/* Document Reminder/Upload Button */}
+          {selectedPetId && petDocumentCount === 0 && onNavigateToDocuments && (
+            <div className="mb-3 p-3 liquid-glass border border-dogswab-mint/30 rounded-2xl">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <FileText className="w-5 h-5 text-dogswab-mint flex-shrink-0" />
+                  <p className="text-sm text-dogswab-navy font-medium truncate">
+                    Upload {selectedPet?.name}'s medical records for better insights
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onNavigateToDocuments}
+                  className="flex items-center gap-2 px-4 py-2 liquid-glass-button text-white rounded-xl hover:scale-105 transition-all duration-300 flex-shrink-0 text-sm font-semibold"
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-end space-x-3">
-            <VoiceInput 
+            <VoiceInput
               onTranscript={(text) => {
                 setInput(text);
                 // Auto-send voice messages for better UX
