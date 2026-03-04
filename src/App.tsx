@@ -179,13 +179,49 @@ function App() {
       category
     };
 
+    // Generate intelligent chat title from first message
+    const generateChatTitle = (message: string, petName?: string): string => {
+      const lower = message.toLowerCase();
+
+      // Check for common topics and generate descriptive titles
+      if (lower.includes('vomit') || lower.includes('threw up')) {
+        return petName ? `${petName} - Vomiting Issue` : 'Vomiting Issue';
+      } else if (lower.includes('diarrhea') || lower.includes('loose stool')) {
+        return petName ? `${petName} - Digestive Issue` : 'Digestive Issue';
+      } else if (lower.includes('scratch') || lower.includes('itch')) {
+        return petName ? `${petName} - Skin/Itching` : 'Skin/Itching Issue';
+      } else if (lower.includes('limp') || lower.includes('leg') || lower.includes('walk')) {
+        return petName ? `${petName} - Mobility Concern` : 'Mobility Concern';
+      } else if (lower.includes('eat') || lower.includes('appetite') || lower.includes('food')) {
+        return petName ? `${petName} - Eating Habits` : 'Eating Habits';
+      } else if (lower.includes('cough') || lower.includes('sneez') || lower.includes('breath')) {
+        return petName ? `${petName} - Respiratory` : 'Respiratory Issue';
+      } else if (lower.includes('behav') || lower.includes('aggress') || lower.includes('anxiety')) {
+        return petName ? `${petName} - Behavior` : 'Behavior Concern';
+      } else if (lower.includes('eye') || lower.includes('ear')) {
+        return petName ? `${petName} - Eye/Ear Issue` : 'Eye/Ear Issue';
+      } else if (lower.includes('weight') || lower.includes('fat') || lower.includes('thin')) {
+        return petName ? `${petName} - Weight Concern` : 'Weight Concern';
+      } else if (lower.includes('vaccine') || lower.includes('shot')) {
+        return petName ? `${petName} - Vaccination` : 'Vaccination Query';
+      } else if (lower.includes('tick') || lower.includes('flea') || lower.includes('parasite')) {
+        return petName ? `${petName} - Parasite Issue` : 'Parasite Issue';
+      } else {
+        // Default: use first 40 chars
+        const shortMessage = message.slice(0, 40).trim();
+        return petName
+          ? `${petName} - ${shortMessage}${message.length > 40 ? '...' : ''}`
+          : shortMessage + (message.length > 40 ? '...' : '');
+      }
+    };
+
     // Update chat with user message
-    setChats(prev => prev.map(chat => 
-      chat.id === chatId 
+    setChats(prev => prev.map(chat =>
+      chat.id === chatId
         ? {
             ...chat,
             messages: [...chat.messages, userMessage],
-            title: chat.messages.length === 0 ? content.slice(0, 50) + (content.length > 50 ? '...' : '') : chat.title,
+            title: chat.messages.length === 0 ? generateChatTitle(content, pet?.name) : chat.title,
             updatedAt: new Date(),
             petId: finalPetId
           }
@@ -466,6 +502,7 @@ Expected monthly earnings: $2,000-$8,000`);
                   userId={user?.id || 'guest'}
                   pets={pets}
                   isPremium={subscription.tier === 'premium'}
+                  onUpgrade={() => setShowSubscriptionModal(true)}
                 />
               </div>
             </div>
@@ -501,6 +538,7 @@ Expected monthly earnings: $2,000-$8,000`);
                   setCurrentView('pets');
                 }
               }}
+              onNavigateToDocuments={() => setCurrentView('documents')}
             />
           ) : currentView === 'pets' ? (
             <PetManagement
@@ -571,6 +609,7 @@ Expected monthly earnings: $2,000-$8,000`);
                   userId={user?.id || 'guest'}
                   pets={pets}
                   isPremium={subscription.tier === 'premium'}
+                  onUpgrade={() => setShowSubscriptionModal(true)}
                 />
               </div>
             </div>
@@ -587,6 +626,7 @@ Expected monthly earnings: $2,000-$8,000`);
                   userId={user?.id || 'guest'}
                   pets={pets}
                   isPremium={subscription.tier === 'premium'}
+                  onUpgrade={() => setShowSubscriptionModal(true)}
                 />
               </div>
             </div>
