@@ -52,7 +52,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [selectedPetId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Use setTimeout to ensure DOM is fully updated before scrolling
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    };
+
+    // Immediate scroll
+    scrollToBottom();
+
+    // Delayed scroll to handle any delayed rendering
+    const timeoutId = setTimeout(scrollToBottom, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
