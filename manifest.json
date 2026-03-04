@@ -1,0 +1,62 @@
+{
+  "name": "DOGSWAB",
+  "short_name": "DOGSWAB",
+  "description": "Pet health education app connecting owners with veterinary professionals. Educational information only - not medical advice.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#77e1c0",
+  "theme_color": "#2d2f63",
+  "categories": ["education", "lifestyle", "health"],
+  "lang": "en-US",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/dogswab-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/dogswab-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/dogswab-screenshot-390x844.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Pet Care Info",
+      "short_name": "Care",
+      "description": "Access pet care education",
+      "url": "/?action=new-chat",
+      "icons": [
+        {
+          "src": "/dogswab-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Find Vet",
+      "short_name": "Vet",
+      "description": "Find local veterinarians",
+      "url": "/?action=photo-analysis",
+      "icons": [
+        {
+          "src": "/dogswab-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "DOGSWAB - Pet Health Document Manager",
   "private": true,
-  "version": "1.0.479",
+  "version": "1.0.402",
   "type": "module",
   "description": "Veterinary document management system for storing medical records, tracking health reminders, and finding licensed veterinarians",
   "keywords": [
@@ -34,6 +34,7 @@
     "@capacitor/splash-screen": "^6.0.0",
     "@capacitor/status-bar": "^6.0.0",
     "@stripe/stripe-js": "^7.8.0",
+    "@supabase/supabase-js": "^2.98.0",
     "date-fns": "^4.1.0",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.344.0",
