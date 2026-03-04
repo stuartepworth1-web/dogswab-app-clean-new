@@ -205,16 +205,6 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
           </div>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              Continue without account
-            </button>
-          </div>
         </form>
 
         <div className="px-6 pb-6">
