@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
@@ -27,23 +27,17 @@ import { generateAIResponse, categorizeMessage } from './services/aiService';
 import { Pet, Chat, Message, Subscription, HealthRecord, VetAppointment } from './types';
 import { ReminderService } from './services/reminderService';
 import { ReminderPrompt } from './components/ReminderPrompt';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-  emailVerified: boolean;
-}
+import { authService, User } from './services/supabaseClient';
 
 type View = 'documents' | 'chat' | 'pets' | 'health' | 'vet-registration' | 'privacy-policy' | 'vet-history' | 'recommendations';
 
 function App() {
   // Splash Screen
   const [showSplash, setShowSplash] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
 
   // User Authentication
-  const [user, setUser] = useLocalStorage<User | null>('dogswab-user', null);
+  const [user, setUser] = useState<User | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showMedicalDisclaimer, setShowMedicalDisclaimer] = useLocalStorage<boolean>('dogswab-medical-disclaimer-accepted', false);
 
@@ -95,12 +89,35 @@ function App() {
   const selectedHealthPet = pets.find(pet => pet.id === selectedHealthPetId);
   const isMobile = Capacitor.isNativePlatform();
 
+  // Check for existing authentication session
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Auth check error:', error);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    checkAuth();
+
+    const { data: authListener } = authService.onAuthStateChange((newUser) => {
+      setUser(newUser);
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
+
   // Show medical disclaimer on first use
-  React.useEffect(() => {
+  useEffect(() => {
     const hasAcceptedDisclaimer = localStorage.getItem('dogswab-medical-disclaimer-accepted');
     const hasSeenCompliance = localStorage.getItem('dogswab-compliance-seen');
-    
-    // Always show disclaimer on first app launch
+
     if (!hasAcceptedDisclaimer || hasAcceptedDisclaimer !== 'true') {
       setShowMedicalDisclaimer(true);
     } else if (!hasSeenCompliance) {
@@ -427,6 +444,34 @@ Expected monthly earnings: $2,000-$8,000`);
   // Show splash screen on app startup
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login screen if user is not authenticated
+  if (!user) {
+    return (
+      <ErrorBoundary>
+        <OfflineIndicator />
+        <UserAuth
+          onAuthSuccess={(userData) => {
+            setUser(userData);
+            setShowAuth(false);
+          }}
+          onClose={() => {}}
+        />
+      </ErrorBoundary>
+    );
   }
 
   // Show onboarding if user hasn't completed it and has no pets
