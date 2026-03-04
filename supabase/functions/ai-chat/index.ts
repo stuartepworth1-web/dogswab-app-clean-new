@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { message, category, petName, pet } = await req.json();
+    const { message, category, petName, pet, documents } = await req.json();
 
     if (!message) {
       return new Response(
@@ -86,7 +86,7 @@ Deno.serve(async (req: Request) => {
     let contextualMessage = message;
 
     if (pet) {
-      const petContext = `
+      let petContext = `
 Pet Profile:
 - Name: ${pet.name}
 - Type: ${pet.type}
@@ -95,9 +95,24 @@ Pet Profile:
 - Weight: ${pet.weight ? `${pet.weight} lbs` : 'Not specified'}
 - Gender: ${pet.gender}
 - Spayed/Neutered: ${pet.isNeutered ? 'Yes' : 'No'}
-${pet.medicalHistory ? `- Medical History: ${pet.medicalHistory}` : ''}
+${pet.medicalHistory ? `- Medical History: ${pet.medicalHistory}` : ''}`;
 
-User question about ${pet.name}: ${message}`;
+      // Add document context if available
+      if (documents && documents.length > 0) {
+        petContext += `\n\nMedical Records on File (${documents.length} document${documents.length > 1 ? 's' : ''}):\n`;
+        documents.forEach((doc: any, index: number) => {
+          petContext += `\n${index + 1}. ${doc.title} (${doc.document_type.replace('_', ' ')})`;
+          if (doc.upload_date) {
+            petContext += ` - Uploaded: ${new Date(doc.upload_date).toLocaleDateString()}`;
+          }
+          if (doc.notes) {
+            petContext += `\n   Notes: ${doc.notes}`;
+          }
+        });
+        petContext += `\n\nYou can reference these medical records when providing educational information.`;
+      }
+
+      petContext += `\n\nUser question about ${pet.name}: ${message}`;
       contextualMessage = petContext;
     } else if (petName) {
       contextualMessage = `Regarding my pet ${petName}: ${message}`;
