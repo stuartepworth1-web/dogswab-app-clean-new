@@ -52,9 +52,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [selectedPetId]);
 
   useEffect(() => {
-    // Use setTimeout to ensure DOM is fully updated before scrolling
+    // Scroll to bottom when messages change
     const scrollToBottom = () => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      if (messagesEndRef.current) {
+        // Get the parent scrollable container
+        const scrollContainer = messagesEndRef.current.closest('.overflow-y-auto');
+        if (scrollContainer) {
+          // Scroll the container to the bottom
+          scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        }
+      }
     };
 
     // Immediate scroll
@@ -64,7 +71,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const timeoutId = setTimeout(scrollToBottom, 100);
 
     return () => clearTimeout(timeoutId);
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,9 +276,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             ))}
           </div>
         )}
-        
+
         {isLoading && (
-          <div className="flex justify-start max-w-2xl mx-auto px-2 sm:px-4">
+          <div className="flex justify-start max-w-2xl mx-auto px-2 sm:px-4 mb-4">
             <div className="flex items-start space-x-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 liquid-glass-button rounded-3xl flex items-center justify-center flex-shrink-0 mt-1 shadow-lg animate-pulse-slow">
                 <span className="text-white">🤖</span>
@@ -289,8 +296,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           </div>
         )}
-        
-        <div ref={messagesEndRef} />
+
+        {/* Scroll anchor with padding to ensure it's always visible */}
+        <div ref={messagesEndRef} className="h-4" />
       </div>
 
       {/* Professional Input Bar */}
