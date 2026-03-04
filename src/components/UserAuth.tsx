@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Lock, Eye, EyeOff, Shield, Phone } from 'lucide-react';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-  emailVerified: boolean;
-}
+import React, { useState } from 'react';
+import { User as UserIcon, Mail, Lock, Eye, EyeOff, Shield } from 'lucide-react';
+import { authService, User } from '../services/supabaseClient';
 
 interface UserAuthProps {
   onAuthSuccess: (user: User) => void;
@@ -42,9 +35,6 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
     }
 
     if (!isLogin) {
-      if (!formData.name) {
-        newErrors.name = 'Name is required';
-      }
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
@@ -56,43 +46,31 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
+    setErrors({});
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      let user: User | null;
+
       if (isLogin) {
-        // Mock login
-        const user: User = {
-          id: 'user_' + Date.now(),
-          email: formData.email,
-          name: formData.email.split('@')[0],
-          createdAt: new Date(),
-          emailVerified: true
-        };
-        
-        // Store user in localStorage for persistence
-        localStorage.setItem('dogswab-user', JSON.stringify(user));
+        user = await authService.signIn(formData.email, formData.password);
+      } else {
+        user = await authService.signUp(formData.email, formData.password, formData.name);
+      }
+
+      if (user) {
         onAuthSuccess(user);
       } else {
-        // Mock registration
-        const user: User = {
-          id: 'user_' + Date.now(),
-          email: formData.email,
-          name: formData.name,
-          createdAt: new Date(),
-          emailVerified: false
-        };
-        
-        localStorage.setItem('dogswab-user', JSON.stringify(user));
-        onAuthSuccess(user);
+        throw new Error('Authentication failed');
       }
-    } catch (error) {
-      setErrors({ general: 'Authentication failed. Please try again.' });
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      setErrors({
+        general: error.message || 'Authentication failed. Please try again.'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -125,21 +103,18 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
           {!isLogin && (
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Full Name
+                Full Name (Optional)
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent"
                   placeholder="Enter your full name"
                 />
               </div>
-              {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
             </div>
           )}
 
