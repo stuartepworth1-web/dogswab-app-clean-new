@@ -258,12 +258,14 @@ function App() {
       };
 
       console.log('Adding AI message to chat:', aiMessage);
-      
-      setChats(prev => prev.map(chat => 
-        chat.id === chatId 
+
+      // Preserve the title when adding AI response
+      setChats(prev => prev.map(chat =>
+        chat.id === chatId
           ? {
               ...chat,
               messages: [...chat.messages, aiMessage],
+              title: chat.title, // Explicitly preserve the title
               updatedAt: new Date()
             }
           : chat
@@ -286,11 +288,12 @@ function App() {
         petId: finalPetId
       };
 
-      setChats(prev => prev.map(chat => 
-        chat.id === chatId 
+      setChats(prev => prev.map(chat =>
+        chat.id === chatId
           ? {
               ...chat,
               messages: [...chat.messages, errorMessage],
+              title: chat.title, // Explicitly preserve the title
               updatedAt: new Date()
             }
           : chat
