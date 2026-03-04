@@ -9,6 +9,16 @@ export const generateAIResponse = async (
   try {
     console.log('generateAIResponse called with:', { message, category, petName, pet: pet?.name });
 
+    // Fetch pet documents for context if pet is specified
+    let petDocuments: any[] = [];
+    if (pet?.id) {
+      const storedDocs = localStorage.getItem(`pet_documents_${pet.id}`);
+      if (storedDocs) {
+        petDocuments = JSON.parse(storedDocs);
+        console.log(`Found ${petDocuments.length} documents for ${pet.name}`);
+      }
+    }
+
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -21,10 +31,20 @@ export const generateAIResponse = async (
 
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase configuration missing');
-      return getFallbackResponse(category, petName || 'your pet');
+      return getFallbackResponse(category, petName || 'your pet', petDocuments);
     }
 
     const apiUrl = `${supabaseUrl}/functions/v1/ai-chat`;
+
+    // Prepare document summaries (metadata only, no base64 content)
+    const documentSummaries = petDocuments.map(doc => ({
+      title: doc.title,
+      document_type: doc.document_type,
+      file_name: doc.file_name,
+      upload_date: doc.upload_date,
+      notes: doc.notes,
+      extracted_data: doc.extracted_data
+    }));
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -36,7 +56,8 @@ export const generateAIResponse = async (
         message,
         category,
         petName,
-        pet
+        pet,
+        documents: documentSummaries
       })
     });
 
@@ -57,7 +78,7 @@ export const generateAIResponse = async (
 
       if (response.status === 503) {
         console.log('AI service not configured, using fallback');
-        return getFallbackResponse(category, petName || 'your pet');
+        return getFallbackResponse(category, petName || 'your pet', petDocuments);
       }
 
       throw new Error(errorData.error || `HTTP ${response.status}: ${errorText}`);
@@ -85,21 +106,25 @@ export const generateAIResponse = async (
       }
     }
 
-    return getFallbackResponse(category, petName || 'your pet');
+    return getFallbackResponse(category, petName || 'your pet', petDocuments);
   }
 };
 
-function getFallbackResponse(category: string, petRef: string): string {
+function getFallbackResponse(category: string, petRef: string, documents: any[] = []): string {
+  const docContext = documents.length > 0
+    ? `\n\n📄 **Medical Records Available:** ${documents.length} document${documents.length > 1 ? 's' : ''} on file (${documents.map(d => d.document_type.replace('_', ' ')).join(', ')})`
+    : '';
+
   if (category === 'emergency') {
-    return `🚨 **EMERGENCY DETECTED** - This appears to be an urgent situation!\n\n**IMMEDIATE ACTIONS:**\n• Contact your veterinarian RIGHT NOW\n• If after hours, call emergency animal hospital\n• Keep ${petRef} calm and still\n• Do not give human medications\n• Monitor breathing and consciousness\n\n**Emergency Hotline:** Call your vet immediately!\n\n⚠️ This is a demo response. AI service not fully configured.`;
+    return `🚨 **EMERGENCY DETECTED** - This appears to be an urgent situation!\n\n**IMMEDIATE ACTIONS:**\n• Contact your veterinarian RIGHT NOW\n• If after hours, call emergency animal hospital\n• Keep ${petRef} calm and still\n• Do not give human medications\n• Monitor breathing and consciousness\n\n**Emergency Hotline:** Call your vet immediately!${docContext}\n\n⚠️ This is a demo response. AI service not fully configured.`;
   } else if (category === 'symptoms') {
-    return `I understand you're concerned about ${petRef}'s symptoms. Here's what I recommend:\n\n**IMMEDIATE CARE:**\n• Monitor ${petRef} closely for changes\n• Keep them comfortable and hydrated\n• Document symptoms (photos, notes)\n• Check temperature if possible\n\n**WHEN TO CALL VET:**\n• Symptoms worsen or persist\n• Loss of appetite for 24+ hours\n• Lethargy or unusual behavior\n• Any concerning changes\n\n**NEXT STEPS:**\n• Continue monitoring\n• Consider vet consultation if no improvement\n\n⚠️ Demo response - AI service not fully configured.`;
+    return `I understand you're concerned about ${petRef}'s symptoms. Here's what I recommend:\n\n**IMMEDIATE CARE:**\n• Monitor ${petRef} closely for changes\n• Keep them comfortable and hydrated\n• Document symptoms (photos, notes)\n• Check temperature if possible\n\n**WHEN TO CALL VET:**\n• Symptoms worsen or persist\n• Loss of appetite for 24+ hours\n• Lethargy or unusual behavior\n• Any concerning changes\n\n**NEXT STEPS:**\n• Continue monitoring\n• Consider vet consultation if no improvement${docContext}\n\n⚠️ Demo response - AI service not fully configured.`;
   } else if (category === 'behavior') {
-    return `Regarding ${petRef}'s behavior, here are some insights:\n\n**BEHAVIORAL GUIDANCE:**\n• Sudden changes may indicate health issues\n• Maintain consistent routines\n• Use positive reinforcement training\n• Consider environmental stressors\n\n**COMMON CAUSES:**\n• Medical conditions\n• Anxiety or stress\n• Changes in environment\n• Need for more exercise/stimulation\n\n**RECOMMENDATIONS:**\n• Monitor for patterns\n• Ensure adequate exercise\n• Consider professional training if needed\n\n⚠️ Demo response - AI service not fully configured.`;
+    return `Regarding ${petRef}'s behavior, here are some insights:\n\n**BEHAVIORAL GUIDANCE:**\n• Sudden changes may indicate health issues\n• Maintain consistent routines\n• Use positive reinforcement training\n• Consider environmental stressors\n\n**COMMON CAUSES:**\n• Medical conditions\n• Anxiety or stress\n• Changes in environment\n• Need for more exercise/stimulation\n\n**RECOMMENDATIONS:**\n• Monitor for patterns\n• Ensure adequate exercise\n• Consider professional training if needed${docContext}\n\n⚠️ Demo response - AI service not fully configured.`;
   } else if (category === 'nutrition') {
-    return `For ${petRef}'s nutrition concerns:\n\n**FEEDING GUIDELINES:**\n• Maintain consistent feeding schedule\n• Fresh water always available\n• Age-appropriate, high-quality food\n• Monitor portion sizes\n\n**DIETARY TIPS:**\n• Introduce new foods gradually\n• Avoid human food toxins\n• Consider life stage needs\n• Watch for food allergies\n\n**WHEN TO CONSULT VET:**\n• Sudden appetite changes\n• Digestive issues\n• Weight gain/loss\n\n⚠️ Demo response - AI service not fully configured.`;
+    return `For ${petRef}'s nutrition concerns:\n\n**FEEDING GUIDELINES:**\n• Maintain consistent feeding schedule\n• Fresh water always available\n• Age-appropriate, high-quality food\n• Monitor portion sizes\n\n**DIETARY TIPS:**\n• Introduce new foods gradually\n• Avoid human food toxins\n• Consider life stage needs\n• Watch for food allergies\n\n**WHEN TO CONSULT VET:**\n• Sudden appetite changes\n• Digestive issues\n• Weight gain/loss${docContext}\n\n⚠️ Demo response - AI service not fully configured.`;
   } else {
-    return `Thank you for your question about ${petRef}. Here's some general guidance:\n\n**GENERAL PET CARE:**\n• Regular veterinary checkups\n• Balanced diet and exercise\n• Monitor behavior and appetite\n• Keep vaccinations current\n• Provide safe, comfortable environment\n\n**HEALTH MONITORING:**\n• Watch for changes in eating/drinking\n• Note energy level changes\n• Track bathroom habits\n• Monitor social behavior\n\n**PREVENTIVE CARE:**\n• Annual vet visits\n• Dental care\n• Parasite prevention\n• Weight management\n\n⚠️ Demo response - AI service not fully configured.`;
+    return `Thank you for your question about ${petRef}. Here's some general guidance:\n\n**GENERAL PET CARE:**\n• Regular veterinary checkups\n• Balanced diet and exercise\n• Monitor behavior and appetite\n• Keep vaccinations current\n• Provide safe, comfortable environment\n\n**HEALTH MONITORING:**\n• Watch for changes in eating/drinking\n• Note energy level changes\n• Track bathroom habits\n• Monitor social behavior\n\n**PREVENTIVE CARE:**\n• Annual vet visits\n• Dental care\n• Parasite prevention\n• Weight management${docContext}\n\n⚠️ Demo response - AI service not fully configured.`;
   }
 }
 
