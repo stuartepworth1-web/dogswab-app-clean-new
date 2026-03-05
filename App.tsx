@@ -385,8 +385,17 @@ function App() {
         return;
       }
 
-      // Web version: subscriptions only available in iOS App
-      alert('⚠️ Subscriptions are only available in the iOS app.\n\nPlease download DOGSWAB from the App Store to subscribe.');
+      // Web version: use Stripe
+      console.log('Using Stripe for web subscription:', tier);
+      const { createStripeCheckoutSession } = await import('./services/stripeService');
+      const session = await createStripeCheckoutSession(tier);
+
+      if (session && session.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = session.url;
+      } else {
+        throw new Error('Failed to create checkout session');
+      }
 
     } catch (error) {
       console.error('Subscription error:', error);

@@ -113,9 +113,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white w-full overflow-hidden">
+    <div className="flex flex-col h-full bg-white w-full overflow-hidden relative">
       {/* Clean Professional Header */}
-      <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm z-10">
+      <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm z-10 sticky top-0">
         <div className="flex items-center justify-between w-full">
           <button
             onClick={onToggleSidebar}
@@ -152,7 +152,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
+      <div
+        className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0 relative"
+        style={{
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          position: 'relative',
+          isolation: 'isolate'
+        }}
+      >
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
@@ -325,7 +334,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Professional Input Bar */}
-      <div className="liquid-glass border-t border-white/30 p-4 sm:p-6 safe-area-bottom flex-shrink-0 shadow-2xl">
+      <div className="liquid-glass border-t border-white/30 p-4 sm:p-6 safe-area-bottom flex-shrink-0 shadow-2xl sticky bottom-0 z-10 bg-white/95 backdrop-blur-xl">
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto w-full">
           {/* Document Reminder/Upload Button */}
           {selectedPetId && petDocumentCount === 0 && onNavigateToDocuments && (

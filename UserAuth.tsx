@@ -77,151 +77,149 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
-        <div className="p-6 border-b border-gray-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f8fafc 100%)',
+      backgroundSize: '200% 200%',
+      animation: 'gradient-shift 15s ease infinite'
+    }}>
+      <div className="liquid-glass max-w-md w-full shadow-2xl border-2 border-white/40 rounded-3xl overflow-hidden">
+        <div className="p-8 border-b border-white/30 liquid-nav">
           <div className="text-center">
-            <div className="w-16 h-16 bg-dogswab-mint rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-white" />
+            <div className="w-20 h-20 liquid-glass-button rounded-3xl flex items-center justify-center mx-auto mb-6 animate-float shadow-2xl">
+              <span className="text-3xl">🐾</span>
             </div>
-            <h2 className="text-2xl font-bold text-dogswab-navy">
+            <h2 className="text-3xl font-bold text-dogswab-navy mb-2">
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h2>
-            <p className="text-gray-600 mt-2">
+            <p className="text-dogswab-navy/70 font-medium">
               {isLogin ? 'Sign in to access your pet health records' : 'Join DOGSWAB to get started'}
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-8 space-y-5">
           {errors.general && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-sm text-red-700">{errors.general}</p>
+            <div className="liquid-glass border-2 border-red-300 rounded-2xl p-4">
+              <p className="text-sm text-red-700 font-medium">{errors.general}</p>
             </div>
           )}
 
           {!isLogin && (
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-dogswab-navy mb-2">
                 Full Name (Optional)
               </label>
               <div className="relative">
-                <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <UserIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dogswab-navy/40" />
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-4 liquid-glass border-2 border-white/40 rounded-2xl text-dogswab-navy font-medium focus:ring-2 focus:ring-dogswab-mint focus:border-dogswab-mint transition-all"
                   placeholder="Enter your full name"
+                  autoComplete="name"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-dogswab-navy mb-2">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dogswab-navy/40" />
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
+                className={`w-full pl-12 pr-4 py-4 liquid-glass border-2 rounded-2xl text-dogswab-navy font-medium focus:ring-2 focus:ring-dogswab-mint focus:border-dogswab-mint transition-all ${
+                  errors.email ? 'border-red-300' : 'border-white/40'
                 }`}
                 placeholder="Enter your email"
+                autoComplete="email"
               />
             </div>
-            {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-red-600 font-medium mt-1">{errors.email}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-dogswab-navy mb-2">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dogswab-navy/40" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
+                className={`w-full pl-12 pr-14 py-4 liquid-glass border-2 rounded-2xl text-dogswab-navy font-medium focus:ring-2 focus:ring-dogswab-mint focus:border-dogswab-mint transition-all ${
+                  errors.password ? 'border-red-300' : 'border-white/40'
                 }`}
                 placeholder="Enter your password"
+                autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-dogswab-navy/40 hover:text-dogswab-navy transition-colors"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-            {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password}</p>}
+            {errors.password && <p className="text-sm text-red-600 font-medium mt-1">{errors.password}</p>}
           </div>
 
           {!isLogin && (
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-dogswab-navy mb-2">
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dogswab-navy/40" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pl-12 pr-4 py-4 liquid-glass border-2 rounded-2xl text-dogswab-navy font-medium focus:ring-2 focus:ring-dogswab-mint focus:border-dogswab-mint transition-all ${
+                    errors.confirmPassword ? 'border-red-300' : 'border-white/40'
                   }`}
                   placeholder="Confirm your password"
+                  autoComplete="new-password"
                 />
               </div>
-              {errors.confirmPassword && <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-sm text-red-600 font-medium mt-1">{errors.confirmPassword}</p>}
             </div>
           )}
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-dogswab-mint text-white py-3 px-4 rounded-xl hover:bg-dogswab-mint-dark disabled:opacity-50 transition-colors font-semibold flex items-center justify-center"
+            className="w-full liquid-glass-button text-white py-4 px-6 rounded-2xl disabled:opacity-50 transition-all duration-300 font-bold text-lg flex items-center justify-center hover:scale-105 shadow-2xl mt-6"
           >
             {isLoading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
             ) : (
               isLogin ? 'Sign In' : 'Create Account'
             )}
           </button>
 
-          <div className="text-center">
+          <div className="text-center pt-2">
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-dogswab-mint hover:text-dogswab-mint-dark font-semibold"
+              className="text-dogswab-mint hover:text-dogswab-navy font-bold transition-colors"
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
           </div>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              Continue without account
-            </button>
-          </div>
         </form>
 
-        <div className="px-6 pb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <div className="flex items-start space-x-2">
-              <Shield className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-blue-700">
+        <div className="px-8 pb-8">
+          <div className="liquid-glass border-2 border-dogswab-mint/30 rounded-2xl p-4">
+            <div className="flex items-start space-x-3">
+              <Shield className="w-5 h-5 text-dogswab-mint mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-dogswab-navy font-medium">
                 Your data is encrypted and secure. We follow HIPAA guidelines for health information protection.
               </p>
             </div>
