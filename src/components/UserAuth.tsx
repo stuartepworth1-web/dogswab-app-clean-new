@@ -111,8 +111,9 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white focus:ring-2 focus:ring-dogswab-mint focus:border-transparent"
                   placeholder="Enter your full name"
+                  autoComplete="name"
                 />
               </div>
             </div>
@@ -128,10 +129,11 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
+                className={`w-full pl-10 pr-4 py-3 border rounded-xl text-gray-900 bg-white focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your email"
+                autoComplete="email"
               />
             </div>
             {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
@@ -147,10 +149,11 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
+                className={`w-full pl-10 pr-12 py-3 border rounded-xl text-gray-900 bg-white focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your password"
+                autoComplete="current-password"
               />
               <button
                 type="button"
@@ -174,10 +177,11 @@ export const UserAuth: React.FC<UserAuthProps> = ({ onAuthSuccess, onClose }) =>
                   type={showPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-xl text-gray-900 bg-white focus:ring-2 focus:ring-dogswab-mint focus:border-transparent ${
                     errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Confirm your password"
+                  autoComplete="new-password"
                 />
               </div>
               {errors.confirmPassword && <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>}
