@@ -113,7 +113,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white w-full max-w-full overflow-hidden">
+    <div className="flex flex-col h-full bg-white w-full overflow-hidden">
       {/* Clean Professional Header */}
       <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm z-10">
         <div className="flex items-center justify-between w-full">
@@ -152,7 +152,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
