@@ -509,7 +509,7 @@ Expected monthly earnings: $2,000-$8,000`);
 
   return (
     <ErrorBoundary>
-      <div className="flex h-screen w-full overflow-hidden" style={{ backgroundColor: '#2d2f63' }}>
+      <div className="flex h-screen w-full overflow-hidden relative" style={{ backgroundColor: '#2d2f63' }}>
         <OfflineIndicator />
         
         <Sidebar

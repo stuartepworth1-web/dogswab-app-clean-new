@@ -152,7 +152,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-scroll overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0 relative" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', height: 'calc(100% - 200px)' }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
