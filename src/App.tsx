@@ -441,6 +441,17 @@ Expected monthly earnings: $2,000-$8,000`);
     setShowInsuranceQuotes(true);
   }, []);
 
+  const handleSignOut = useCallback(async () => {
+    try {
+      await authService.signOut();
+      setUser(null);
+      localStorage.clear();
+    } catch (error) {
+      console.error('Sign out error:', error);
+      alert('Failed to sign out. Please try again.');
+    }
+  }, []);
+
   // Show splash screen on app startup
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
@@ -498,7 +509,7 @@ Expected monthly earnings: $2,000-$8,000`);
 
   return (
     <ErrorBoundary>
-      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#2d2f63' }}>
+      <div className="flex h-screen" style={{ backgroundColor: '#2d2f63' }}>
         <OfflineIndicator />
         
         <Sidebar
@@ -537,12 +548,13 @@ Expected monthly earnings: $2,000-$8,000`);
             setCurrentView('recommendations');
             setSidebarOpen(false);
           }}
+          onSignOut={handleSignOut}
           subscriptionTier={subscription.tier}
           consultationsUsed={subscription.consultationsUsed}
           consultationsLimit={subscription.consultationsLimit}
         />
 
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full max-w-full">
+        <div className="flex-1 flex flex-col min-w-0 w-full max-w-full">
           {currentView === 'documents' ? (
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-white">
               <div className="max-w-7xl mx-auto">
