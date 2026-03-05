@@ -28,6 +28,16 @@ export default {
           'secondary': 'linear-gradient(135deg, #a8f0d9 0%, #4dd4a8 100%)',
           'accent': 'linear-gradient(135deg, #4a4d7a 0%, #2d2f63 100%)',
         },
+        'gpt': {
+          'darker': '#1a1b2e',
+          'light': '#3a3c5e',
+          'lighter': '#2d2f63',
+          'border': 'rgba(119, 225, 192, 0.2)',
+          'accent': '#77e1c0',
+          'accent-hover': '#4dd4a8',
+          'text': '#ffffff',
+          'text-secondary': 'rgba(255, 255, 255, 0.7)',
+        },
       },
       fontSize: {
         // Optimized for readability and hierarchy

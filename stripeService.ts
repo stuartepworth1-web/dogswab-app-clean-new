@@ -66,6 +66,20 @@ export const subscriptionPlans: SubscriptionPlan[] = [
 ];
 
 // Create checkout session with real Stripe integration
+export const createStripeCheckoutSession = async (tier: string) => {
+  const plan = subscriptionPlans.find(p => p.id === tier);
+  if (!plan) {
+    throw new Error('Invalid subscription tier');
+  }
+
+  // For now, use demo mode since Stripe isn't fully configured
+  return {
+    url: null,
+    success: false,
+    demo: true
+  };
+};
+
 export const createCheckoutSession = async (priceId: string, userId: string) => {
   try {
     // Handle Apple's test environment vs production environment

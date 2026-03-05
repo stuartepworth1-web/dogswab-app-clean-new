@@ -113,9 +113,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white w-full max-w-full">
+    <div className="flex-1 flex flex-col h-full bg-white w-full max-w-full overflow-hidden">
       {/* Clean Professional Header */}
-      <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm">
+      <div className="liquid-nav border-b border-white/20 px-4 py-3 safe-area-top flex-shrink-0 shadow-sm z-10">
         <div className="flex items-center justify-between w-full">
           <button
             onClick={onToggleSidebar}
@@ -152,7 +152,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
+      <div className="flex-1 overflow-y-scroll overflow-x-hidden liquid-glass px-2 sm:px-4 w-full min-h-0 relative" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', height: 'calc(100% - 200px)' }}>
         {messages.length === 0 ? (
           <div className="max-w-2xl mx-auto py-6 sm:py-8 min-h-full flex flex-col justify-start">
             {/* Professional Welcome Section */}
@@ -160,16 +160,35 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <span className="text-4xl">🐾</span>
               </div>
-              <div className="w-20 h-20 bg-mint-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <div className="w-20 h-20 bg-mint-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-float">
                 <span className="text-white font-bold text-2xl">🐾</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-semibold text-dogswab-navy mb-2">
                 Pet Health Education & Information
               </h2>
-              <p className="text-dogswab-navy/70 leading-relaxed max-w-md mx-auto text-sm sm:text-base">
-                Get general pet health information and connect with veterinarians. 
+              <p className="text-dogswab-navy/70 leading-relaxed max-w-md mx-auto text-sm sm:text-base mb-4">
+                Get general pet health information and connect with veterinarians.
                 For medical advice, always consult a licensed veterinarian.
               </p>
+
+              {/* Educational Feature Highlight */}
+              <div className="max-w-lg mx-auto mt-6 p-4 bg-gradient-to-r from-dogswab-mint/20 to-dogswab-navy/20 rounded-2xl border-2 border-dogswab-mint/30 animate-fade-in">
+                <div className="flex items-start gap-3 text-left">
+                  <div className="flex-shrink-0 w-10 h-10 bg-dogswab-mint rounded-xl flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-dogswab-navy text-sm sm:text-base mb-1">
+                      💡 Get Personalized Insights
+                    </h3>
+                    <p className="text-xs sm:text-sm text-dogswab-navy/80 leading-relaxed">
+                      <strong>DOGSWAB's key feature:</strong> Upload your pet's medical records and documents.
+                      The AI uses this context to provide tailored educational information specific to your pet's health history,
+                      helping you understand their unique situation better.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Professional Quick Actions */}
@@ -178,7 +197,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <React.Fragment key={index}>
                   <button
                     onClick={action.onClick}
-                    className="w-full p-3 sm:p-4 lg:p-6 liquid-glass rounded-2xl sm:rounded-3xl liquid-card-hover transition-all duration-400 text-left group animate-fade-in"
+                    className="w-full p-3 sm:p-4 lg:p-6 liquid-glass rounded-2xl sm:rounded-3xl liquid-card-hover transition-all duration-400 text-left group animate-fade-in hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="flex items-center space-x-2 sm:space-x-3">
@@ -252,8 +271,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         ) : (
           <div className="max-w-2xl mx-auto py-4 space-y-4 min-h-full">
-            {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+            {messages.map((message, index) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
                 <div className="max-w-[85%] sm:max-w-[80%]">
                   {message.sender === 'user' ? (
                     <div className="liquid-glass-button text-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl rounded-br-xl shadow-lg">
