@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, MessageSquare, Heart, Settings, Menu, X, Crown, Activity, Stethoscope, Shield, Bell, FileText, Clipboard, Lightbulb } from 'lucide-react';
+import { Plus, MessageSquare, Heart, Settings, Menu, X, Crown, Activity, Stethoscope, Shield, Bell, FileText, Clipboard, Lightbulb, LogOut } from 'lucide-react';
 import { Chat, Pet } from '../types';
 import { ReminderList } from './ReminderList';
 
@@ -19,6 +19,7 @@ interface SidebarProps {
   onDocuments: () => void;
   onVetHistory: () => void;
   onRecommendations: () => void;
+  onSignOut: () => void;
   subscriptionTier: string;
   consultationsUsed: number;
   consultationsLimit: number;
@@ -40,6 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onDocuments,
   onVetHistory,
   onRecommendations,
+  onSignOut,
   subscriptionTier,
   consultationsUsed,
   consultationsLimit
@@ -280,6 +282,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="font-bold block text-base">Join as Veterinarian</span>
               <p className="text-sm text-white/90 font-medium">Start earning today</p>
             </div>
+          </button>
+
+          <button
+            onClick={onSignOut}
+            className="w-full flex items-center space-x-3 p-4 rounded-3xl liquid-glass liquid-card-hover transition-all duration-300 text-red-600 border border-red-200 hover:bg-red-50"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="font-semibold text-sm">Sign Out</span>
           </button>
         </div>
       </div>
