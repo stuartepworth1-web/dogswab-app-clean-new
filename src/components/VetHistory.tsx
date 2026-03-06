@@ -27,9 +27,10 @@ interface VetHistoryProps {
   userId: string;
   pets: Pet[];
   isPremium: boolean;
+  onUpgrade: () => void;
 }
 
-export default function VetHistory({ userId, pets, isPremium }: VetHistoryProps) {
+export default function VetHistory({ userId, pets, isPremium, onUpgrade }: VetHistoryProps) {
   const [history, setHistory] = useState<VetHistoryEntry[]>([]);
   const [selectedPet, setSelectedPet] = useState<string>('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -154,7 +155,7 @@ export default function VetHistory({ userId, pets, isPremium }: VetHistoryProps)
           </p>
         </div>
         <button
-          onClick={() => canAddMore ? setShowAddModal(true) : alert('Upgrade to Premium for unlimited history entries')}
+          onClick={() => canAddMore ? setShowAddModal(true) : onUpgrade()}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
@@ -184,7 +185,7 @@ export default function VetHistory({ userId, pets, isPremium }: VetHistoryProps)
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
           <p className="text-amber-800">
             <strong>Free Plan:</strong> {petHistory.length}/{freeLimit} history entries used.
-            <button className="ml-2 text-amber-900 underline font-medium">
+            <button onClick={onUpgrade} className="ml-2 text-amber-900 underline font-medium">
               Upgrade to Premium
             </button> for unlimited history tracking.
           </p>

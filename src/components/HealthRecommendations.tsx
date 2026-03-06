@@ -26,9 +26,10 @@ interface HealthRecommendationsProps {
   userId: string;
   pets: Pet[];
   isPremium: boolean;
+  onUpgrade: () => void;
 }
 
-export default function HealthRecommendations({ userId, pets, isPremium }: HealthRecommendationsProps) {
+export default function HealthRecommendations({ userId, pets, isPremium, onUpgrade }: HealthRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [selectedPet, setSelectedPet] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<'active' | 'completed' | 'all'>('active');
@@ -290,7 +291,7 @@ export default function HealthRecommendations({ userId, pets, isPremium }: Healt
             Get AI-powered recommendations based on your pet's history, including vaccination reminders,
             checkup suggestions, dietary advice, and preventive care tips.
           </p>
-          <button className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
+          <button onClick={onUpgrade} className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
             Upgrade to Premium
           </button>
         </div>

@@ -23,9 +23,10 @@ interface PetDocumentsProps {
   userId: string;
   pets: Pet[];
   isPremium: boolean;
+  onUpgrade: () => void;
 }
 
-export default function PetDocuments({ userId, pets, isPremium }: PetDocumentsProps) {
+export default function PetDocuments({ userId, pets, isPremium, onUpgrade }: PetDocumentsProps) {
   const [documents, setDocuments] = useState<PetDocument[]>([]);
   const [selectedPet, setSelectedPet] = useState<string>('');
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -133,7 +134,7 @@ export default function PetDocuments({ userId, pets, isPremium }: PetDocumentsPr
             </p>
           </div>
           <button
-            onClick={() => canUploadMore ? setShowUploadModal(true) : alert('Upgrade to Premium for unlimited document uploads')}
+            onClick={() => canUploadMore ? setShowUploadModal(true) : onUpgrade()}
             className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-2xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
           >
             <Plus className="w-5 h-5" />
@@ -165,7 +166,7 @@ export default function PetDocuments({ userId, pets, isPremium }: PetDocumentsPr
           <div className="backdrop-blur-xl bg-blue-50/50 border border-blue-200/50 rounded-3xl p-5">
             <p className="text-blue-900 text-sm">
               <strong>Free Plan:</strong> {petDocuments.length}/{freeLimit} documents used.
-              <button className="ml-2 text-blue-600 underline font-semibold hover:text-blue-700 transition-colors">
+              <button onClick={onUpgrade} className="ml-2 text-blue-600 underline font-semibold hover:text-blue-700 transition-colors">
                 Upgrade to Premium
               </button> for unlimited document storage.
             </p>

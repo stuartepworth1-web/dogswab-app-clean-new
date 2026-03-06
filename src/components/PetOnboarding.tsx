@@ -75,8 +75,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">What's your pet's name?</h2>
-              <p className="text-gpt-text-secondary text-lg">Let's start with the basics</p>
+              <h2 className="text-3xl font-bold text-white">What's your pet's name?</h2>
+              <p className="text-white/80 text-lg">Let's start with the basics</p>
             </div>
             <div className="max-w-sm mx-auto px-4">
               <input
@@ -95,8 +95,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">What type of pet is {formData.name}?</h2>
-              <p className="text-gpt-text-secondary text-lg">This helps us provide better advice</p>
+              <h2 className="text-3xl font-bold text-white">What type of pet is {formData.name}?</h2>
+              <p className="text-white-secondary text-lg">This helps us provide better advice</p>
             </div>
             <div className="grid grid-cols-2 gap-4 max-w-md mx-auto px-4">
               {[
@@ -127,8 +127,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">What breed is {formData.name}?</h2>
-              <p className="text-gpt-text-secondary text-lg">This is optional but helps with specific advice</p>
+              <h2 className="text-3xl font-bold text-white">What breed is {formData.name}?</h2>
+              <p className="text-white-secondary text-lg">This is optional but helps with specific advice</p>
             </div>
             <div className="max-w-sm mx-auto px-4">
               <input
@@ -147,8 +147,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">How old is {formData.name}?</h2>
-              <p className="text-gpt-text-secondary text-lg">Age helps us provide age-appropriate advice</p>
+              <h2 className="text-3xl font-bold text-white">How old is {formData.name}?</h2>
+              <p className="text-white-secondary text-lg">Age helps us provide age-appropriate advice</p>
             </div>
             <div className="max-w-sm mx-auto px-4">
               <input
@@ -169,8 +169,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">What's {formData.name}'s weight?</h2>
-              <p className="text-gpt-text-secondary text-lg">Weight helps with dosage and health recommendations</p>
+              <h2 className="text-3xl font-bold text-white">What's {formData.name}'s weight?</h2>
+              <p className="text-white-secondary text-lg">Weight helps with dosage and health recommendations</p>
             </div>
             <div className="max-w-sm mx-auto px-4">
               <div className="relative">
@@ -196,8 +196,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">Is {formData.name} male or female?</h2>
-              <p className="text-gpt-text-secondary text-lg">This helps with health-specific advice</p>
+              <h2 className="text-3xl font-bold text-white">Is {formData.name} male or female?</h2>
+              <p className="text-white-secondary text-lg">This helps with health-specific advice</p>
             </div>
             <div className="flex gap-4 max-w-sm mx-auto px-4">
               {[
@@ -225,8 +225,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">Is {formData.name} spayed or neutered?</h2>
-              <p className="text-gpt-text-secondary text-lg">This affects certain health recommendations</p>
+              <h2 className="text-3xl font-bold text-white">Is {formData.name} spayed or neutered?</h2>
+              <p className="text-white-secondary text-lg">This affects certain health recommendations</p>
             </div>
             <div className="flex gap-4 max-w-sm mx-auto px-4">
               {[
@@ -254,8 +254,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
         return (
           <div className="text-center space-y-6">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">Any medical history for {formData.name}?</h2>
-              <p className="text-gpt-text-secondary text-lg">Optional - helps us provide safer recommendations</p>
+              <h2 className="text-3xl font-bold text-white">Any medical history for {formData.name}?</h2>
+              <p className="text-white-secondary text-lg">Optional - helps us provide safer recommendations</p>
             </div>
             <div className="max-w-md mx-auto px-4">
               <textarea
@@ -277,8 +277,8 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
               <Check className="w-8 h-8 text-green-600" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-gpt-text">Perfect! {formData.name} is all set up</h2>
-              <p className="text-gpt-text-secondary text-lg">
+              <h2 className="text-3xl font-bold text-white">Perfect! {formData.name} is all set up</h2>
+              <p className="text-white-secondary text-lg">
                 We now have everything we need to provide personalized health advice for your {formData.type}
               </p>
             </div>
@@ -322,12 +322,12 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
               <span className="text-6xl">🐾</span>
             </div>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-bold text-gpt-text mb-4">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-4">
             Welcome to DOGSWAB
           </h1>
           {currentStep !== 'complete' && (
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
-              <div className="text-sm text-gpt-text-secondary font-medium">
+              <div className="text-sm text-white-secondary font-medium">
                 Step {currentStepIndex + 1} of {totalSteps}
               </div>
               <div className="flex space-x-1">
@@ -335,7 +335,7 @@ export const PetOnboarding: React.FC<PetOnboardingProps> = ({
                   <div
                     key={index}
                     className={`w-2 h-2 rounded-full ${
-                      index <= currentStepIndex ? 'bg-gpt-accent' : 'bg-gpt-border'
+                      index <= currentStepIndex ? 'bg-dogswab-mint' : 'bg-white/30'
                     }`}
                   />
                 ))}

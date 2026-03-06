@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check, Crown, Zap, Star } from 'lucide-react';
 import { handlePurchaseFromAppStore, isNativePlatform } from '../services/iapService';
+import { createStripeCheckoutSession } from '../services/stripeService';
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     setIsProcessing(true);
     try {
       if (isNativePlatform()) {
+        // Mobile app - use In-App Purchase
         const result = await handlePurchaseFromAppStore(selectedTier);
         if (result.success) {
           onSubscribe(selectedTier);
@@ -29,7 +31,13 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           alert(`Purchase failed: ${result.error || 'Unknown error'}`);
         }
       } else {
-        onSubscribe(selectedTier);
+        // Web and desktop - use Stripe
+        const session = await createStripeCheckoutSession(selectedTier);
+        if (session && session.url) {
+          window.location.href = session.url;
+        } else {
+          alert('Failed to create checkout session. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Subscription error:', error);
@@ -164,7 +172,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 • <strong>DOGSWAB Premium Monthly:</strong> $19.99/month<br/>
                 • <strong>DOGSWAB Pro Monthly:</strong> $49.99/month<br/>
                 <br/>
-                Payment charged to iTunes Account. Auto-renews unless cancelled 24 hours before period ends.
+                Payment processed securely. Auto-renews unless cancelled 24 hours before period ends.
               </p>
               <div className="mt-4 pt-4 border-t-2 border-blue-300 flex flex-col sm:flex-row gap-3 items-center justify-center">
                 <a
@@ -191,11 +199,11 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               disabled={currentTier === selectedTier || isProcessing}
               className="bg-dogswab-mint text-white px-8 py-4 rounded-2xl hover:bg-dogswab-mint-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold text-lg shadow-xl w-full sm:w-auto"
             >
-              {isProcessing ? 'Processing...' : currentTier === selectedTier ? 'Current Plan' : 'Subscribe via App Store'}
+              {isProcessing ? 'Processing...' : currentTier === selectedTier ? 'Current Plan' : 'Subscribe Now'}
             </button>
 
             <p className="text-sm text-dogswab-navy/70 mt-4 font-medium">
-              Subscriptions managed by Apple App Store. Cancel anytime in your device settings.
+              Secure payment processing. Cancel anytime from your account settings.
             </p>
           </div>
         </div>

@@ -385,8 +385,17 @@ function App() {
         return;
       }
 
-      // Web version: subscriptions only available in iOS App
-      alert('⚠️ Subscriptions are only available in the iOS app.\n\nPlease download DOGSWAB from the App Store to subscribe.');
+      // Web version: use Stripe
+      console.log('Using Stripe for web subscription:', tier);
+      const { createStripeCheckoutSession } = await import('./services/stripeService');
+      const session = await createStripeCheckoutSession(tier);
+
+      if (session && session.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = session.url;
+      } else {
+        throw new Error('Failed to create checkout session');
+      }
 
     } catch (error) {
       console.error('Subscription error:', error);
@@ -509,7 +518,7 @@ Expected monthly earnings: $2,000-$8,000`);
 
   return (
     <ErrorBoundary>
-      <div className="flex h-screen" style={{ backgroundColor: '#2d2f63' }}>
+      <div className="flex h-screen w-full overflow-hidden relative" style={{ backgroundColor: '#2d2f63' }}>
         <OfflineIndicator />
         
         <Sidebar
@@ -554,7 +563,7 @@ Expected monthly earnings: $2,000-$8,000`);
           consultationsLimit={subscription.consultationsLimit}
         />
 
-        <div className="flex-1 flex flex-col min-w-0 w-full max-w-full">
+        <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden md:ml-0">
           {currentView === 'documents' ? (
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-white">
               <div className="max-w-7xl mx-auto">

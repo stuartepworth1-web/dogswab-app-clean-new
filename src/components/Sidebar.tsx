@@ -98,9 +98,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-6">
           <button
             onClick={onNewChat}
-            className="w-full liquid-glass-button text-white py-4 px-6 rounded-3xl font-semibold flex items-center justify-center space-x-3 text-lg shadow-lg"
+            className="w-full liquid-glass-button text-white py-4 px-6 rounded-3xl font-semibold flex items-center justify-center space-x-3 text-lg shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-2xl group"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
             <span>New Consultation</span>
           </button>
         </div>
