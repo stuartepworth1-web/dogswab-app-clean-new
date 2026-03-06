@@ -159,7 +159,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'contain',
           position: 'relative',
-          isolation: 'isolate'
+          isolation: 'isolate',
+          overflowY: 'scroll',
+          height: '100%'
         }}
       >
         {messages.length === 0 ? (
