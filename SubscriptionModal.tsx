@@ -32,7 +32,8 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         }
       } else {
         // Web and desktop - use Stripe
-        const session = await createStripeCheckoutSession(selectedTier);
+        const userId = localStorage.getItem('userId') || 'guest';
+        const session = await createStripeCheckoutSession(selectedTier, userId);
         if (session && session.url) {
           window.location.href = session.url;
         } else {

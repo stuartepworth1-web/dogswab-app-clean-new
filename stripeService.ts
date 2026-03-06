@@ -26,7 +26,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     id: 'basic',
     name: 'DOGSWAB Basic Monthly',
     price: 9.99,
-    priceId: 'REPLACE_WITH_BASIC_PRICE_ID',
+    priceId: import.meta.env.VITE_STRIPE_BASIC_PRICE_ID || 'price_basic',
     features: [
       '50 AI consultations/month',
       'Basic health tracking',
@@ -38,7 +38,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     id: 'premium',
     name: 'DOGSWAB Premium Monthly',
     price: 19.99,
-    priceId: 'REPLACE_WITH_PREMIUM_PRICE_ID',
+    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PRICE_ID || 'price_premium',
     popular: true,
     features: [
       'Unlimited AI consultations',
@@ -53,7 +53,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     id: 'pro',
     name: 'DOGSWAB Pro Monthly',
     price: 49.99,
-    priceId: 'REPLACE_WITH_PRO_PRICE_ID',
+    priceId: import.meta.env.VITE_STRIPE_PRO_PRICE_ID || 'price_pro',
     features: [
       'Everything in Premium',
       'Video vet consultations',
@@ -66,18 +66,53 @@ export const subscriptionPlans: SubscriptionPlan[] = [
 ];
 
 // Create checkout session with real Stripe integration
-export const createStripeCheckoutSession = async (tier: string) => {
+export const createStripeCheckoutSession = async (tier: string, userId: string) => {
   const plan = subscriptionPlans.find(p => p.id === tier);
   if (!plan) {
     throw new Error('Invalid subscription tier');
   }
 
-  // For now, use demo mode since Stripe isn't fully configured
-  return {
-    url: null,
-    success: false,
-    demo: true
-  };
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase configuration missing');
+    }
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        priceId: plan.priceId,
+        userId: userId,
+        successUrl: `${window.location.origin}?success=true`,
+        cancelUrl: `${window.location.origin}?canceled=true`,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create checkout session');
+    }
+
+    const data = await response.json();
+    return {
+      url: data.url,
+      sessionId: data.sessionId,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    return {
+      url: null,
+      success: false,
+      error: error.message,
+    };
+  }
 };
 
 export const createCheckoutSession = async (priceId: string, userId: string) => {
